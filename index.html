@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A phone-friendly dictionary of English phrasal verbs for B1 and B2 learners.">
+<title>Dictionary of Phrasal Verbs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Zilla+Slab:wght@600;700&display=swap">
+<style>
+/* Layout: one narrow column for a phone. A sticky search bar, then the verb families as a
+   tap-to-open list; each phrasal verb opens in place to show its meaning and example. */
+:root {
+  --bg: #f3f6fa;
+  --surface: #ffffff;
+  --ink: #16233b;
+  --muted: #56617a;
+  --line: #d8dfe9;
+  --accent: #1d55b8;
+  --hi: #ffe680;
+  --star: #a87700;
+  --font-display: "Zilla Slab", Rockwell, "Roboto Slab", Georgia, serif;
+  --font-body: "Atkinson Hyperlegible", Verdana, "Segoe UI", Roboto, Arial, sans-serif;
+  --gutter: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1522; --surface: #172132; --ink: #e9eef7; --muted: #a0adc2;
+    --line: #2b3852; --accent: #8ab6ff; --hi: #4d4213; --star: #f0c64a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1522; --surface: #172132; --ink: #e9eef7; --muted: #a0adc2;
+  --line: #2b3852; --accent: #8ab6ff; --hi: #4d4213; --star: #f0c64a;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+/* Anything marked hidden stays hidden, whatever its own layout rule says. */
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 34rem; margin-inline: auto; padding-inline: var(--gutter); padding-block: 20px 40px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+.how { margin: 8px 0 0; color: var(--muted); }
+.how .star { color: var(--star); }
+
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg);
+  margin-inline: calc(var(--gutter) * -1); padding: 12px var(--gutter);
+  display: flex; flex-direction: column; gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.field { position: relative; flex: 1 1 auto; min-width: 0; display: flex; }
+.field svg { position: absolute; left: 13px; top: 50%; width: 20px; height: 20px; margin-top: -10px; color: var(--muted); pointer-events: none; }
+.field:focus-within svg { color: var(--accent); }
+.bar input {
+  flex: 1 1 auto; min-width: 0; width: 100%; height: 48px;
+  font: inherit; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 0 14px 0 42px;
+  -webkit-appearance: none; appearance: none;
+}
+.bar input::placeholder { color: var(--muted); opacity: 1; }
+.chip {
+  flex: 0 0 auto; height: 48px; padding: 0 14px;
+  font: inherit; font-weight: 700; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer; white-space: nowrap;
+}
+.chip .star { color: var(--star); }
+.chip[aria-pressed="true"] { background: var(--hi); border-color: var(--star); }
+.chip[aria-pressed="true"] .star { color: var(--ink); }
+
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.families { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.section-label { margin: 20px 2px 8px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.sub { flex: 1 1 auto; min-width: 0; text-align: right; color: var(--muted); font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hw.word { font-size: 1.3rem; letter-spacing: 0; }
+.hw .star { color: var(--star); font-family: var(--font-body); font-size: 1.1rem; }
+.fam { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.fam h2 { margin: 0; font: inherit; }
+.fam-btn {
+  width: 100%; min-height: 60px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 12px;
+  font: inherit; color: var(--ink); background: transparent; border: 0; text-align: left; cursor: pointer;
+  scroll-margin-top: 84px;
+}
+.hw { font-family: var(--font-display); font-weight: 700; font-size: 1.55rem; letter-spacing: 0.02em; }
+.count { white-space: nowrap; margin-left: auto; color: var(--muted); font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.chev { flex: 0 0 auto; width: 12px; height: 12px; border-right: 2.5px solid var(--accent); border-bottom: 2.5px solid var(--accent); transform: rotate(45deg); margin: 0 4px 4px 0; transition: transform .15s; }
+[aria-expanded="true"] > .chev { transform: rotate(-135deg); margin: 4px 4px 0 0; }
+@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+
+.panel { border-top: 1px solid var(--line); padding: 4px 0 8px; }
+.group-label { margin: 12px 14px 2px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.group-label .star { color: var(--star); }
+.entries { list-style: none; margin: 0; padding: 0; }
+.entries li + li { border-top: 1px solid var(--line); }
+.entry-btn {
+  width: 100%; min-height: 50px; padding: 8px 14px;
+  display: flex; align-items: center; gap: 8px;
+  font: inherit; color: var(--ink); background: transparent; border: 0; text-align: left; cursor: pointer;
+}
+.entry-btn .mark { flex: 0 0 1.1em; color: var(--star); text-align: center; }
+.pv { font-size: 1.12rem; min-width: 0; }
+.pv .base { color: var(--muted); }
+.pv .part { font-weight: 700; }
+.entry-btn .chev { margin-left: auto; width: 9px; height: 9px; border-width: 2px; }
+.entry-btn[aria-expanded="true"] { background: var(--hi); }
+.entry-btn[aria-expanded="true"] .mark, .entry-btn[aria-expanded="true"] .base { color: var(--ink); }
+.def { padding: 10px 14px 14px calc(14px + 1.1em + 8px); display: flex; flex-direction: column; gap: 14px; }
+.sense-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.sense.numbered { display: flex; gap: 10px; align-items: flex-start; }
+.sense.numbered + .sense.numbered { border-top: 1px solid var(--line); padding-top: 14px; }
+.num { flex: 0 0 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--ink); color: var(--surface); font-weight: 700; font-size: 0.85rem; line-height: 1.5rem; text-align: center; font-variant-numeric: tabular-nums; }
+.def:has(.numbered) { padding-left: 14px; }
+.def p { margin: 0; }
+.def .label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.def .usage { font-style: italic; color: var(--muted); }
+.def .example { font-style: italic; }
+
+.bar-row { display: flex; gap: 8px; align-items: stretch; }
+.levels { display: flex; gap: 5px; }
+.seg .star { color: var(--star); }
+.seg[aria-pressed="true"] .star { color: var(--ink); }
+.section-label .star { color: var(--star); }
+@media (max-width: 350px) { .seg { white-space: normal; } }
+.seg {
+  flex: 1 1 auto; min-width: 0; min-height: 52px; padding: 4px 5px; white-space: nowrap;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font: inherit; font-weight: 700; font-size: 0.9rem; line-height: 1.2; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer;
+}
+.seg small { font-weight: 400; font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.seg[aria-pressed="true"] { background: var(--hi); border-color: var(--star); }
+.seg[aria-pressed="true"] small { color: var(--ink); }
+#browse { scroll-margin-top: 150px; }
+.list-head { display: flex; align-items: center; gap: 10px; margin: 16px 2px 0; }
+.list-head .section-label { margin: 0; flex: 1 1 auto; min-width: 0; }
+.mini {
+  flex: 0 0 auto; min-height: 40px; padding: 0 12px;
+  font: inherit; font-size: 0.9rem; font-weight: 700; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer; white-space: nowrap;
+}
+.mini { display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; font-size: 0.85rem; }
+.list-head { gap: 8px; }
+@media (max-width: 380px) { .view-title { font-size: 1.35rem; } }
+.mini svg { width: 16px; height: 16px; color: var(--accent); flex: 0 0 auto; }
+.group-head { margin: 18px 2px 6px; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.02em; }
+.group-head.plain { font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.flat.entries { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.opt-sub { flex: 1 1 auto; min-width: 0; text-align: right; color: var(--muted); font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.opt .chev, .go .chev { transform: rotate(-45deg); margin: 0 4px 0 0; }
+.opt .hw { flex: 0 0 auto; white-space: nowrap; }
+.view-title { font-family: var(--font-display); font-weight: 700; font-size: 1.45rem; line-height: 1.2; margin: 0; flex: 1 1 auto; min-width: 0; }
+.view-title .star { color: var(--star); font-family: var(--font-body); font-size: 1.2rem; }
+.view-count { margin: 4px 2px 0; color: var(--muted); }
+.panel-note { margin: 10px 14px 2px; color: var(--muted); font-size: 0.9rem; }
+.results { margin-top: 14px; }
+.results-count { margin: 0 2px 8px; color: var(--muted); }
+.results .entries { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.empty { margin: 18px 2px; }
+.foot { margin: 28px 2px 0; color: var(--muted); font-size: 0.85rem; }
+.about-link { margin-top: 28px; }
+.about-link svg { flex: 0 0 auto; width: 26px; height: 26px; color: var(--accent); }
+.about-link .info-title { font-weight: 700; font-size: 1.05rem; flex: 1 1 auto; min-width: 0; }
+.about { padding: 0 2px; }
+.about .list-head { margin: 16px 0 0; }
+.about p { margin: 0 0 12px; }
+.about .made { margin: 8px 0 0; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; }
+.about h3 { margin: 30px 0 10px; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1.2; }
+.about h4 { margin: 22px 0 8px; font-size: 1rem; font-weight: 700; }
+.about-card { margin: 0 0 10px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.about-card h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: 1.2rem; }
+.about-card h4 .star { color: var(--star); font-family: var(--font-body); font-size: 1rem; }
+.about-card h4 small { font-family: var(--font-body); font-weight: 400; font-size: 0.9rem; color: var(--muted); }
+.about-card p { margin: 0 0 8px; }
+.about-card p:last-child { margin-bottom: 0; }
+.about .label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.about ul, .about ol { margin: 0 0 12px; padding-left: 1.3em; }
+.about li { margin: 0 0 10px; }
+.about ol li { margin-bottom: 4px; }
+.about a { color: var(--accent); font-weight: 700; text-underline-offset: 3px; }
+.about a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header id="top">
+    <h1>Dictionary of Phrasal Verbs</h1>
+    <p class="how">Search for a verb or a meaning, or choose how to see the verbs.</p>
+  </header>
+
+  <div class="bar" role="search">
+    <div class="bar-row">
+    <button id="home" class="chip" type="button" hidden>&#8592; Back</button>
+    <div class="field">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+    <input id="q" type="search" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search" aria-label="Search for a verb or a meaning">
+    </div>
+    </div>
+  </div>
+
+  <div id="browse"></div>
+  <section id="about" class="about" hidden>
+    <div class="list-head"><h2 class="view-title">About this dictionary</h2></div>
+    <p class="made">This was made by David Carr with the assistance of Claude Coworker on 7 October 2026.</p>
+
+    <h3>What the front-page buttons mean</h3>
+    <p>The front page has seven buttons for the verbs. Each one shows the same <span data-n="all"></span> phrasal verbs, sorted in a different way.</p>
+
+    <div class="about-card">
+      <h4><span class="star" aria-hidden="true">&#9733; </span>Learn these first <small>(<span data-n="l1"></span> verbs)</small></h4>
+      <p><span class="label">What it means</span>The phrasal verbs a B1 to B2 learner needs most in everyday life. Judgement.</p>
+      <p><span class="label">Order on its screen</span>By verb family. Families with the most &#9733; verbs come first: <span data-n="imp"></span>.</p>
+    </div>
+    <div class="about-card">
+      <h4>Other useful verbs <small>(<span data-n="l2"></span>)</small></h4>
+      <p><span class="label">What it means</span>Common verbs to learn next. Judgement.</p>
+      <p><span class="label">Order on its screen</span>The same as above.</p>
+    </div>
+    <div class="about-card">
+      <h4>More verbs <small>(<span data-n="l3"></span>)</small></h4>
+      <p><span class="label">What it means</span>Verbs a learner meets less often. Judgement.</p>
+      <p><span class="label">Order on its screen</span>The same as above.</p>
+    </div>
+    <div class="about-card">
+      <h4>Everyday uses</h4>
+      <p><span class="label">What it means</span>The verbs under <span data-n="topics"></span> topics from daily life. A verb can be in more than one topic. The topics, and which verb goes in which topic, are judgement.</p>
+      <p><span class="label">Order on its screen</span>Topics run from Daily routine to Things that happen and change. Inside a topic, &#9733; verbs come first, then the other two groups.</p>
+    </div>
+    <div class="about-card">
+      <h4>Verb families</h4>
+      <p><span class="label">What it means</span>The verbs grouped by their first verb, such as all the GET verbs together. There are <span data-n="big"></span> families with four or more verbs. The rest are under Other verbs.</p>
+      <p><span class="label">Order on its screen</span>By the number of phrasal verbs in each family in this dictionary: <span data-n="sizes"></span>. This is a count. Inside a family, &#9733; verbs come first.</p>
+    </div>
+    <div class="about-card">
+      <h4>Little words</h4>
+      <p><span class="label">What it means</span>The verbs grouped by their little word, such as all the verbs with up.</p>
+      <p><span class="label">Order on its screen</span>in, out, up, down, on, off, back, away, over. Opposites sit next to each other. This order is judgement. Inside a little word, &#9733; verbs come first.</p>
+    </div>
+    <div class="about-card">
+      <h4>Full dictionary</h4>
+      <p><span class="label">What it means</span>All <span data-n="all"></span> verbs under their first letter.</p>
+      <p><span class="label">Order on its screen</span>A to Z.</p>
+    </div>
+
+    <p>The A to Z button on a screen re-orders that screen alphabetically, and the search box looks in both the verbs and the meanings.</p>
+    <h4>The <span data-n="topics"></span> topics, in order</h4>
+    <ol id="about-topics"></ol>
+
+    <h3>Sources</h3>
+    <p>Two published sources were used, both for choosing which first verbs matter most. Nothing in the dictionary is copied from them.</p>
+    <ul>
+      <li><em>Gardner, D. and Davies, M. (2007). Pointing out frequent phrasal verbs: a corpus-based analysis. TESOL Quarterly 41(2), 339&#8211;359.</em> Used for the 20 first verbs that are most common in phrasal verbs in the British National Corpus: go, come, take, get, set and 15 more. Together they make 53.7% of the phrasal verbs counted there. <a href="https://www.mark-davies.org/articles/davies_31.pdf" target="_blank" rel="noopener">Read the article</a></li>
+      <li><em>Kov&#225;cs, &#201;. (2002). Properties of verbs which constitute phrasal verbs. Eger Journal of English Studies 3.</em> Used for the 11 verbs that make the most phrasal verbs in the Collins COBUILD Dictionary of Phrasal Verbs: put, go, come, get, push, pull, take, bring, turn, look and fall. These are the 11 biggest verb families in the dictionary. <a href="https://library.hungaricana.hu/en/view/EKTFK_EngStud03/?pg=119" target="_blank" rel="noopener">Read the article</a></li>
+    </ul>
+    <h4>Corpus</h4>
+    <p>One corpus stands behind the sources. No corpus was searched directly to make this dictionary.</p>
+    <ul>
+      <li><em>British National Corpus Consortium (2000). British National Corpus: World Edition. Oxford: Humanities Computing Unit of Oxford University.</em> 100 million words of British English. Gardner and Davies took their counts from it.</li>
+      <li><em>Collins COBUILD Dictionary of Phrasal Verbs (1995), as cited by Kov&#225;cs.</em> This is a dictionary, not a corpus. Kov&#225;cs took her counts from it. Collins builds its COBUILD dictionaries on its own corpus, the Bank of English. Open question: this has not been confirmed for the 1995 edition.</li>
+    </ul>
+
+    <h3>Judgement</h3>
+    <p>Everything below is judgement. None of it comes from a published list or a measured count.</p>
+    <ul>
+      <li>Which phrasal verbs are in the dictionary, apart from the 11 verb families taken from Kov&#225;cs.</li>
+      <li>The meanings and the example sentences. Claude wrote them. They have not been checked against a published dictionary.</li>
+      <li>The three groups: Learn these first, Other useful verbs and More verbs.</li>
+      <li>The <span data-n="topics"></span> everyday topics, and which verbs are in each topic.</li>
+      <li>The order of the little words.</li>
+    </ul>
+    <p>Two things are not judgement: the size of each verb family, which is a count of the verbs in this dictionary, and the A to Z order.</p>
+  </section>
+  <section id="results" class="results" hidden aria-live="polite"></section>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+(function () {
+  var DATA = [{"v":"PUT","items":[{"pv":"put about","l":3,"s":[{"m":"tell many people (a story or rumour)","ex":"Someone put it about that the shop was closing."}],"t":[11]},{"pv":"put above","l":3,"s":[{"m":"treat as more important than","ex":"She puts her family above her job."}],"t":[10]},{"pv":"put across","l":2,"s":[{"m":"explain an idea clearly","ex":"He put his ideas across well."}],"t":[7,11]},{"pv":"put around","l":3,"s":[{"m":"place so that it goes round something","ex":"He put his arm around his son."}],"t":[12]},{"pv":"put aside","l":2,"s":[{"m":"save money or time for later","ex":"I put aside \u00a310 every week."}],"t":[3]},{"pv":"put away","l":1,"s":[{"m":"put something in its usual place","ex":"Put away your toys."}],"t":[1,7]},{"pv":"put back","l":1,"s":[{"m":"return something to its place","ex":"Put the milk back in the fridge."},{"m":"move to a later time","ex":"The meeting was put back to Friday."}],"t":[1,6]},{"pv":"put behind","l":2,"s":[{"m":"try to forget something bad","ex":"She put the argument behind her."}],"t":[10]},{"pv":"put by","l":3,"s":[{"m":"save money for later","ex":"He puts a little money by each month."}],"t":[3]},{"pv":"put down","l":1,"s":[{"m":"place on a surface","ex":"Put down your bags."}],"t":[1,12]},{"pv":"put forth","l":3,"s":[{"m":"(formal) suggest an idea","ex":"She put forth a new plan."}],"t":[8]},{"pv":"put forward","l":1,"s":[{"m":"suggest an idea or a name","ex":"He put forward an idea at the meeting."}],"t":[8,11]},{"pv":"put in","l":1,"s":[{"m":"spend time or effort","ex":"She puts in a lot of hours at work."},{"m":"fit new equipment","ex":"We put in a new shower."}],"t":[1,8]},{"pv":"put off","l":1,"s":[{"m":"delay; do it later","ex":"She put off the meeting until next week."}],"t":[6,8,13]},{"pv":"put on","l":1,"s":[{"m":"wear","ex":"She put on her coat."},{"m":"start (music, TV)","ex":"He put on some music."}],"t":[0,3]},{"pv":"put out","l":1,"s":[{"m":"stop a fire or a cigarette","ex":"The firefighters put out the fire."},{"m":"place outside","ex":"I put the bins out on Monday."}],"t":[1,12]},{"pv":"put over","l":3,"s":[{"m":"explain clearly (same as put across)","ex":"The teacher put the idea over simply."}],"t":[11]},{"pv":"put past","l":3,"s":[{"m":"\u201cI wouldn\u2019t put it past him\u201d = I think he could do it","ex":"I wouldn\u2019t put it past him to lie."}],"t":[11]},{"pv":"put round","l":3,"s":[{"m":"(British) tell many people","ex":"She put it round that he was leaving."}],"t":[11]},{"pv":"put through","l":1,"s":[{"m":"connect someone on the phone","ex":"Can you put me through to the manager?"}],"t":[5]},{"pv":"put together","l":1,"s":[{"m":"build or make from parts","ex":"We put the table together in an hour."}],"t":[1]},{"pv":"put towards","l":2,"s":[{"m":"give money to help pay for something","ex":"I\u2019ll put \u00a320 towards the present."}],"t":[3]},{"pv":"put up","l":1,"s":[{"m":"fix to a wall","ex":"We put up a shelf."},{"m":"give someone a bed","ex":"My sister put me up for the night."},{"m":"put up with = tolerate","ex":"I can\u2019t put up with the noise."}],"t":[1,10]}]},{"v":"GO","items":[{"pv":"go about","l":2,"s":[{"m":"start or deal with a task","ex":"How do I go about finding a flat?"}],"t":[7]},{"pv":"go after","l":2,"s":[{"m":"try to get or catch","ex":"The police went after the thief."}],"t":[12]},{"pv":"go ahead","l":1,"s":[{"m":"start or continue as planned","ex":"The match went ahead in the rain."},{"m":"\u201cGo ahead!\u201d = yes, do it","ex":"Go ahead, ask your question."}],"t":[8,11,13]},{"pv":"go along","l":2,"s":[{"m":"go somewhere with someone","ex":"I went along to the meeting."},{"m":"go along with = agree","ex":"I went along with his plan."}],"t":[11,12]},{"pv":"go around","l":2,"s":[{"m":"(an illness or story) spread","ex":"There\u2019s a cold going around."},{"m":"be enough for everyone","ex":"Is there enough cake to go around?"}],"t":[9]},{"pv":"go away","l":1,"s":[{"m":"leave","ex":"Go away! I\u2019m busy."},{"m":"go on holiday","ex":"We\u2019re going away for the weekend."}],"t":[4,12]},{"pv":"go back","l":1,"s":[{"m":"return","ex":"I went back to the shop."}],"t":[4,12]},{"pv":"go below","l":3,"s":[{"m":"go downstairs on a ship","ex":"The sailors went below."}],"t":[4]},{"pv":"go by","l":2,"s":[{"m":"(time) pass","ex":"Two years went by."}],"t":[4,12,13]},{"pv":"go down","l":1,"s":[{"m":"become lower","ex":"Prices went down."},{"m":"(the sun) set","ex":"The sun goes down at 6."}],"t":[3,12,13]},{"pv":"go forth","l":3,"s":[{"m":"(old, formal) leave and travel","ex":"They went forth into the world."}],"t":[12]},{"pv":"go forward","l":3,"s":[{"m":"move to the next stage","ex":"The plan is going forward."}],"t":[12]},{"pv":"go in","l":1,"s":[{"m":"enter","ex":"It\u2019s cold. Let\u2019s go in."}],"t":[12]},{"pv":"go off","l":1,"s":[{"m":"(an alarm) ring","ex":"The alarm went off at 6."},{"m":"(food) become bad","ex":"The milk has gone off."}],"t":[1,2,5,13]},{"pv":"go on","l":1,"s":[{"m":"continue","ex":"Please go on with your story."},{"m":"happen","ex":"What\u2019s going on?"}],"t":[7,11,13]},{"pv":"go out","l":1,"s":[{"m":"leave home to socialise","ex":"We went out for dinner."},{"m":"(a light) stop shining","ex":"The lights went out."}],"t":[0,12]},{"pv":"go over","l":1,"s":[{"m":"check or repeat carefully","ex":"Let\u2019s go over the answers."}],"t":[7,11]},{"pv":"go overboard","l":2,"s":[{"m":"do too much of something","ex":"Don\u2019t go overboard with the salt."}],"t":[11]},{"pv":"go round","l":2,"s":[{"m":"(British) visit someone\u2019s home","ex":"I went round to my sister\u2019s."}],"t":[4,10]},{"pv":"go together","l":2,"s":[{"m":"look or taste good together","ex":"Cheese and apple go together."}],"t":[3]},{"pv":"go towards","l":2,"s":[{"m":"be used to pay part of something","ex":"The money goes towards the rent."}],"t":[13]},{"pv":"go under","l":2,"s":[{"m":"(a business) fail","ex":"The shop went under last year."},{"m":"sink","ex":"The boat went under."}],"t":[8,13]},{"pv":"go up","l":1,"s":[{"m":"become higher","ex":"The rent went up again."}],"t":[3,12,13]},{"pv":"go through","l":1,"s":[{"m":"experience something difficult","ex":"She went through a hard time last year."},{"m":"check carefully","ex":"Let\u2019s go through the form together."}],"t":[6,7]},{"pv":"go with","l":2,"s":[{"m":"look good together","ex":"That tie goes with your shirt."}],"t":[3]},{"pv":"go for","l":2,"s":[{"m":"choose","ex":"I\u2019ll go for the soup."}],"t":[2]},{"pv":"go out with","l":2,"s":[{"m":"have a romantic relationship with","ex":"She is going out with a boy from her class."}],"t":[10]},{"pv":"go without","l":3,"s":[{"m":"not have something you need","ex":"We went without heating for a week."}],"t":[3,13]}]},{"v":"COME","items":[{"pv":"come about","l":2,"s":[{"m":"happen","ex":"How did the accident come about?"}],"t":[13]},{"pv":"come across","l":1,"s":[{"m":"find or meet by chance","ex":"I came across an old photo."}],"t":[10]},{"pv":"come after","l":3,"s":[{"m":"follow or chase","ex":"The dog came after me."}],"t":[12]},{"pv":"come along","l":1,"s":[{"m":"go with someone","ex":"Come along with us!"},{"m":"make progress","ex":"Your English is coming along."}],"t":[12]},{"pv":"come apart","l":2,"s":[{"m":"break into pieces","ex":"The book came apart in my hands."}],"t":[12]},{"pv":"come around","l":2,"s":[{"m":"visit","ex":"Come around for tea."},{"m":"change your opinion","ex":"He came around to my idea."}],"t":[13]},{"pv":"come away","l":3,"s":[{"m":"leave a place","ex":"I came away feeling happy."}],"t":[12]},{"pv":"come back","l":1,"s":[{"m":"return","ex":"She came back late."}],"t":[0,4,12]},{"pv":"come by","l":2,"s":[{"m":"visit for a short time","ex":"Come by for a cup of tea."}],"t":[10]},{"pv":"come down","l":1,"s":[{"m":"become lower","ex":"Prices are coming down."},{"m":"fall","ex":"The rain came down all night."}],"t":[3,12,13]},{"pv":"come forth","l":3,"s":[{"m":"(formal) appear","ex":"No answer came forth."}],"t":[12]},{"pv":"come forward","l":2,"s":[{"m":"offer help or information","ex":"A witness came forward."}],"t":[6,12]},{"pv":"come in","l":1,"s":[{"m":"enter","ex":"Come in and sit down."}],"t":[6,12]},{"pv":"come off","l":2,"s":[{"m":"become separated from something","ex":"A button came off my coat."}],"t":[12,13]},{"pv":"come on","l":1,"s":[{"m":"hurry up","ex":"Come on, we\u2019re late!"},{"m":"start","ex":"The heating comes on at 6."}],"t":[12,13]},{"pv":"come out","l":1,"s":[{"m":"appear","ex":"The sun came out."},{"m":"be published","ex":"Her new book comes out in May."}],"t":[12,13]},{"pv":"come over","l":1,"s":[{"m":"visit someone\u2019s home","ex":"Come over on Saturday."}],"t":[10,12]},{"pv":"come round","l":2,"s":[{"m":"(British) visit","ex":"Come round for tea on Sunday."},{"m":"(British) wake after being unconscious","ex":"She came round after the operation."}],"t":[9,10,13]},{"pv":"come through","l":2,"s":[{"m":"survive a difficult time","ex":"He came through the operation well."}],"t":[9,13]},{"pv":"come to","l":2,"s":[{"m":"reach a total","ex":"The bill came to \u00a320."}],"t":[3]},{"pv":"come up","l":1,"s":[{"m":"be mentioned","ex":"Your name came up in the meeting."},{"m":"happen unexpectedly","ex":"Something came up at work."}],"t":[11,13]},{"pv":"come up with","l":1,"s":[{"m":"think of an idea or an answer","ex":"She came up with a good idea."}],"t":[7,11]},{"pv":"come down with","l":3,"s":[{"m":"start to be ill with","ex":"I came down with a cold."}],"t":[9]}]},{"v":"GET","items":[{"pv":"get about","l":3,"s":[{"m":"move from place to place","ex":"She gets about by bus."}],"t":[4]},{"pv":"get above","l":3,"s":[{"m":"\u201cget above yourself\u201d = think you are more important than you are","ex":"Don\u2019t get above yourself."}],"t":[10]},{"pv":"get across","l":2,"s":[{"m":"make people understand","ex":"He got his message across."}],"t":[7,11]},{"pv":"get ahead","l":2,"s":[{"m":"be successful","ex":"She worked hard to get ahead."}],"t":[8]},{"pv":"get along","l":1,"s":[{"m":"have a good relationship","ex":"I get along with my flatmates."}],"t":[10]},{"pv":"get around","l":2,"s":[{"m":"(news) spread","ex":"News gets around quickly."},{"m":"move from place to place","ex":"He gets around by bike."}],"t":[4,12]},{"pv":"get away","l":1,"s":[{"m":"escape","ex":"The thief got away."},{"m":"have a holiday","ex":"We got away for a few days."},{"m":"get away with = not be punished","ex":"He was late, but he got away with it."}],"t":[4,11,12]},{"pv":"get back","l":1,"s":[{"m":"return","ex":"What time did you get back?"}],"t":[0,4]},{"pv":"get behind","l":2,"s":[{"m":"be late with work or payments","ex":"I got behind with the rent."}],"t":[7]},{"pv":"get beyond","l":3,"s":[{"m":"move past a stage","ex":"We never got beyond page two."}],"t":[11]},{"pv":"get by","l":1,"s":[{"m":"manage with just enough money or help","ex":"Money is tight, but we get by."}],"t":[3,8]},{"pv":"get down","l":2,"s":[{"m":"make someone sad","ex":"This weather gets me down."},{"m":"write","ex":"Get the phone number down before you forget."}],"t":[10]},{"pv":"get in","l":1,"s":[{"m":"enter (a car)","ex":"Get in the car."},{"m":"arrive","ex":"What time does the train get in?"}],"t":[4,12]},{"pv":"get off","l":1,"s":[{"m":"leave a bus or train","ex":"Get off at the next stop."}],"t":[4]},{"pv":"get on","l":1,"s":[{"m":"board a bus or train","ex":"We got on the bus at the station."},{"m":"get on with = have a good relationship","ex":"I get on well with my neighbours."}],"t":[4,10]},{"pv":"get out","l":1,"s":[{"m":"leave","ex":"Get out of the car."}],"t":[4,12]},{"pv":"get over","l":1,"s":[{"m":"feel better after an illness or a bad time","ex":"It took me a week to get over that cold."}],"t":[9,10]},{"pv":"get round","l":2,"s":[{"m":"(British) find a way to avoid a problem","ex":"We got round the problem."}],"t":[11]},{"pv":"get through","l":1,"s":[{"m":"reach the end of a difficult time","ex":"We got through the winter."},{"m":"reach someone by phone","ex":"I couldn\u2019t get through to the office."}],"t":[5,9,13]},{"pv":"get together","l":1,"s":[{"m":"meet friends or family","ex":"We get together every Friday."}],"t":[0,10]},{"pv":"get up","l":1,"s":[{"m":"leave your bed","ex":"I get up at 7 every morning."}],"t":[0,12]},{"pv":"get into","l":2,"s":[{"m":"become interested in","ex":"I got into football when I was ten."},{"m":"be accepted by a college or course","ex":"She got into college."}],"t":[7]},{"pv":"get out of","l":2,"s":[{"m":"avoid doing something","ex":"He always gets out of washing up."}],"t":[11]},{"pv":"get back to","l":2,"s":[{"m":"contact someone again later","ex":"I\u2019ll get back to you tomorrow."}],"t":[5,6]}]},{"v":"PUSH","items":[{"pv":"push about","l":3,"s":[{"m":"(British) tell someone what to do in a rude way","ex":"Don\u2019t let him push you about."}],"t":[10]},{"pv":"push ahead","l":2,"s":[{"m":"continue with a plan","ex":"They pushed ahead with the work."}],"t":[8]},{"pv":"push along","l":3,"s":[{"m":"(informal) leave","ex":"I must push along now."}],"t":[12]},{"pv":"push around","l":1,"s":[{"m":"tell someone what to do in a rude way","ex":"She pushes her little brother around."}],"t":[10]},{"pv":"push aside","l":2,"s":[{"m":"move out of the way","ex":"He pushed his plate aside."},{"m":"ignore","ex":"She pushed her worries aside."}],"t":[12]},{"pv":"push back","l":1,"s":[{"m":"move to a later time","ex":"The meeting was pushed back to Friday."}],"t":[6,8,12]},{"pv":"push by","l":3,"s":[{"m":"move past someone roughly","ex":"A man pushed by me on the stairs."}],"t":[12]},{"pv":"push forward","l":2,"s":[{"m":"move to the front","ex":"She pushed forward through the crowd."},{"m":"continue","ex":"They pushed forward with the plan."}],"t":[8,12]},{"pv":"push in","l":1,"s":[{"m":"(British) join a queue in front of other people","ex":"Hey, don\u2019t push in!"}],"t":[12]},{"pv":"push off","l":3,"s":[{"m":"(British, informal) go away","ex":"He told me to push off."}],"t":[12]},{"pv":"push on","l":2,"s":[{"m":"continue a journey or a job","ex":"We pushed on to Glasgow."}],"t":[8]},{"pv":"push out","l":2,"s":[{"m":"make someone leave a job or group","ex":"He was pushed out of the company."}],"t":[8]},{"pv":"push over","l":1,"s":[{"m":"make someone or something fall","ex":"The wind pushed the fence over."}],"t":[12]},{"pv":"push past","l":1,"s":[{"m":"move past someone roughly","ex":"She pushed past me."}],"t":[12]},{"pv":"push round","l":3,"s":[{"m":"(British) same as push around","ex":"Stop pushing me round."}],"t":[10]},{"pv":"push through","l":2,"s":[{"m":"get a plan or law accepted quickly","ex":"The council pushed the plan through."}],"t":[8]},{"pv":"push to","l":3,"s":[{"m":"close a door without locking it","ex":"Push the door to, please."}],"t":[1]},{"pv":"push towards","l":3,"s":[{"m":"encourage someone in one direction","ex":"His parents pushed him towards medicine."}],"t":[12]},{"pv":"push up","l":1,"s":[{"m":"make a price or number rise","ex":"The cold weather pushed up prices."}],"t":[3,13]}]},{"v":"PULL","items":[{"pv":"pull about","l":3,"s":[{"m":"handle roughly","ex":"The children pulled the dog about."}],"t":[12]},{"pv":"pull ahead","l":3,"s":[{"m":"move in front","ex":"The red car pulled ahead."}],"t":[4]},{"pv":"pull apart","l":2,"s":[{"m":"separate into pieces","ex":"He pulled the bread apart."},{"m":"separate people who are fighting","ex":"The teacher pulled the boys apart."}],"t":[12]},{"pv":"pull around","l":3,"s":[{"m":"turn something to face another way","ex":"He pulled the chair around."}],"t":[12]},{"pv":"pull aside","l":3,"s":[{"m":"take someone away to talk privately","ex":"The manager pulled me aside."}],"t":[11]},{"pv":"pull away","l":1,"s":[{"m":"(a vehicle) start moving","ex":"The bus pulled away."}],"t":[4]},{"pv":"pull back","l":2,"s":[{"m":"move backwards","ex":"The army pulled back."},{"m":"decide not to do something","ex":"They pulled back from the deal."}],"t":[12]},{"pv":"pull down","l":1,"s":[{"m":"destroy a building","ex":"They pulled down the old flats."}],"t":[1]},{"pv":"pull in","l":1,"s":[{"m":"(a vehicle) arrive","ex":"The train pulled in on time."},{"m":"(a vehicle) stop at the side of the road","ex":"The taxi pulled in outside the shop."}],"t":[4]},{"pv":"pull off","l":2,"s":[{"m":"succeed in doing something difficult","ex":"We pulled it off!"}],"t":[8]},{"pv":"pull on","l":3,"s":[{"m":"put on clothes quickly","ex":"He pulled on his boots."}],"t":[3]},{"pv":"pull out","l":1,"s":[{"m":"(a vehicle) move into the road","ex":"A car pulled out in front of me."},{"m":"stop taking part","ex":"She pulled out of the race."}],"t":[4,8]},{"pv":"pull over","l":1,"s":[{"m":"drive to the side of the road and stop","ex":"The police told him to pull over."}],"t":[4]},{"pv":"pull round","l":3,"s":[{"m":"(British) get better after an illness","ex":"She was very ill, but she pulled round."}],"t":[9]},{"pv":"pull through","l":1,"s":[{"m":"survive a serious illness","ex":"The doctors think he will pull through."}],"t":[9,13]},{"pv":"pull to","l":3,"s":[{"m":"close a door or curtains","ex":"Pull the door to behind you."}],"t":[1]},{"pv":"pull up","l":2,"s":[{"m":"(a vehicle) stop","ex":"A taxi pulled up outside."}],"t":[4]}]},{"v":"TAKE","items":[{"pv":"take aback","l":2,"s":[{"m":"surprise or shock (usually \u201cbe taken aback\u201d)","ex":"I was taken aback by the price."}],"t":[10]},{"pv":"take along","l":2,"s":[{"m":"take someone or something with you","ex":"Take an umbrella along."}],"t":[12]},{"pv":"take apart","l":2,"s":[{"m":"separate into parts","ex":"He took the bike apart."}],"t":[1]},{"pv":"take around","l":3,"s":[{"m":"show someone a place","ex":"She took us around the city."}],"t":[4]},{"pv":"take aside","l":3,"s":[{"m":"take someone away to talk privately","ex":"The teacher took me aside."}],"t":[11]},{"pv":"take away","l":1,"s":[{"m":"remove","ex":"Take away the plates, please."},{"m":"buy food to eat somewhere else","ex":"Two coffees to take away, please."}],"t":[2,12]},{"pv":"take back","l":1,"s":[{"m":"return something","ex":"I took the shoes back to the shop."},{"m":"say you did not mean it","ex":"I\u2019m sorry. I take it back."}],"t":[3,11]},{"pv":"take down","l":1,"s":[{"m":"remove from a wall","ex":"Take down the posters."},{"m":"write","ex":"She took down my address."}],"t":[1,6,11]},{"pv":"take in","l":1,"s":[{"m":"understand or remember","ex":"It was a lot to take in."},{"m":"give someone a home","ex":"They took in a stray cat."}],"t":[9,10]},{"pv":"take off","l":1,"s":[{"m":"remove (clothes)","ex":"Take off your coat."},{"m":"leave the ground","ex":"The plane took off late."}],"t":[3,4]},{"pv":"take on","l":1,"s":[{"m":"accept work","ex":"She took on extra work."},{"m":"give someone a job","ex":"The shop took on two new staff."}],"t":[8]},{"pv":"take out","l":1,"s":[{"m":"remove","ex":"Take the chicken out of the oven."},{"m":"invite someone and pay","ex":"He took me out for dinner."}],"t":[2,12]},{"pv":"take over","l":1,"s":[{"m":"take control","ex":"A new manager took over last month."}],"t":[8]},{"pv":"take round","l":3,"s":[{"m":"(British) show someone a place","ex":"I\u2019ll take you round the school."}],"t":[4]},{"pv":"take up","l":1,"s":[{"m":"start a hobby","ex":"He took up running."},{"m":"use space or time","ex":"The sofa takes up a lot of space."}],"t":[8,13]},{"pv":"take after","l":2,"s":[{"m":"be like an older person in your family","ex":"He takes after his father."}],"t":[10]}]},{"v":"BRING","items":[{"pv":"bring about","l":2,"s":[{"m":"make something happen","ex":"The new law brought about many changes."}],"t":[13]},{"pv":"bring along","l":1,"s":[{"m":"bring someone or something with you","ex":"Bring your children along."}],"t":[10]},{"pv":"bring around","l":3,"s":[{"m":"bring to someone\u2019s home","ex":"I\u2019ll bring the book around tonight."},{"m":"persuade","ex":"She said no at first, but we brought her around."}],"t":[10]},{"pv":"bring back","l":1,"s":[{"m":"return with something","ex":"Bring back some milk, please."},{"m":"make you remember","ex":"That song brings back memories."}],"t":[3,12]},{"pv":"bring down","l":2,"s":[{"m":"make lower","ex":"The shop brought down its prices."},{"m":"make fall","ex":"The storm brought down a tree."}],"t":[3,13]},{"pv":"bring forth","l":3,"s":[{"m":"(formal) produce","ex":"The meeting brought forth new ideas."}],"t":[8]},{"pv":"bring forward","l":2,"s":[{"m":"move to an earlier time","ex":"The meeting was brought forward to Monday."}],"t":[6,8]},{"pv":"bring in","l":1,"s":[{"m":"start a new rule or law","ex":"They brought in a new rule."},{"m":"earn","ex":"The shop brings in a lot of money."}],"t":[8]},{"pv":"bring off","l":3,"s":[{"m":"succeed in doing something difficult","ex":"She brought off a great win."}],"t":[8]},{"pv":"bring on","l":2,"s":[{"m":"cause an illness or a problem","ex":"Stress can bring on a headache."}],"t":[9,13]},{"pv":"bring out","l":1,"s":[{"m":"make or publish something new","ex":"They brought out a new phone."}],"t":[8]},{"pv":"bring over","l":3,"s":[{"m":"bring to someone\u2019s home","ex":"Bring your photos over."}],"t":[10]},{"pv":"bring together","l":2,"s":[{"m":"help people to meet or become friends","ex":"Music brings people together."}],"t":[10]},{"pv":"bring up","l":1,"s":[{"m":"mention","ex":"Don\u2019t bring up the football."},{"m":"look after a child until it is an adult","ex":"She brought up three children."}],"t":[10,11]}]},{"v":"TURN","items":[{"pv":"turn against","l":2,"s":[{"m":"stop liking or supporting","ex":"His friends turned against him."}],"t":[10]},{"pv":"turn around","l":1,"s":[{"m":"face the other way","ex":"Turn around and look at me."}],"t":[4,12]},{"pv":"turn away","l":2,"s":[{"m":"refuse to let someone in","ex":"The club turned us away."}],"t":[6]},{"pv":"turn back","l":1,"s":[{"m":"go back the way you came","ex":"The road was closed, so we turned back."}],"t":[4,12]},{"pv":"turn down","l":1,"s":[{"m":"say no to","ex":"She turned down the job."},{"m":"make quieter","ex":"Turn the music down."}],"t":[1,6,8]},{"pv":"turn in","l":3,"s":[{"m":"(informal) go to bed","ex":"I\u2019m tired. I\u2019m going to turn in."}],"t":[0]},{"pv":"turn into","l":1,"s":[{"m":"become","ex":"The rain turned into snow."}],"t":[13]},{"pv":"turn off","l":1,"s":[{"m":"stop a machine or light","ex":"Don\u2019t forget to turn off the lights."}],"t":[1,5]},{"pv":"turn on","l":1,"s":[{"m":"start a machine or light","ex":"Turn on the TV, please."}],"t":[1,5]},{"pv":"turn out","l":1,"s":[{"m":"happen in the end","ex":"It all turned out fine."}],"t":[11,13]},{"pv":"turn over","l":1,"s":[{"m":"turn to the other side","ex":"Turn the page over."}],"t":[12]},{"pv":"turn round","l":2,"s":[{"m":"(British) face the other way","ex":"She turned round and smiled."}],"t":[4,12]},{"pv":"turn to","l":2,"s":[{"m":"go to someone for help","ex":"I turn to my sister when I have a problem."}],"t":[10]},{"pv":"turn up","l":1,"s":[{"m":"arrive","ex":"He turned up late."},{"m":"make louder","ex":"Turn up the radio."}],"t":[1,6,13]}]},{"v":"LOOK","items":[{"pv":"look after","l":1,"s":[{"m":"take care of","ex":"She looks after her dad."}],"t":[9,10]},{"pv":"look ahead","l":2,"s":[{"m":"think about the future","ex":"We need to look ahead to next year."}],"t":[8]},{"pv":"look around","l":1,"s":[{"m":"walk around a place to see what is there","ex":"We looked around the shops."}],"t":[3,4,12]},{"pv":"look back","l":2,"s":[{"m":"think about the past","ex":"When I look back, I was lucky."}],"t":[7]},{"pv":"look down on","l":2,"s":[{"m":"think you are better than someone","ex":"She looks down on people with less money."}],"t":[10]},{"pv":"look for","l":1,"s":[{"m":"try to find","ex":"I\u2019m looking for my keys."}],"t":[3,12]},{"pv":"look forward to","l":1,"s":[{"m":"feel happy about something in the future","ex":"I\u2019m looking forward to the weekend."}],"t":[10]},{"pv":"look into","l":1,"s":[{"m":"investigate","ex":"The council is looking into the problem."}],"t":[6,8,11]},{"pv":"look out","l":1,"s":[{"m":"be careful","ex":"Look out! A car is coming."}],"t":[4,12]},{"pv":"look over","l":2,"s":[{"m":"check quickly","ex":"Can you look over my letter?"}],"t":[7]},{"pv":"look through","l":2,"s":[{"m":"read quickly","ex":"I looked through the newspaper."}],"t":[7]},{"pv":"look up","l":1,"s":[{"m":"find information","ex":"I looked the word up."}],"t":[5,7]},{"pv":"look at","l":1,"s":[{"m":"turn your eyes to something","ex":"Look at the board."}],"t":[7,12]},{"pv":"look like","l":1,"s":[{"m":"have a similar appearance","ex":"She looks like her mother."},{"m":"seem likely","ex":"It looks like rain."}],"t":[11,13]},{"pv":"look out for","l":2,"s":[{"m":"try to notice","ex":"Look out for the number 6 bus."}],"t":[12]},{"pv":"look up to","l":3,"s":[{"m":"admire and respect","ex":"She looks up to her older sister."}],"t":[10]}]},{"v":"FALL","items":[{"pv":"fall about","l":3,"s":[{"m":"(British, informal) laugh a lot","ex":"We fell about laughing."}],"t":[10]},{"pv":"fall apart","l":1,"s":[{"m":"break into pieces","ex":"My shoes are falling apart."}],"t":[1,13]},{"pv":"fall away","l":3,"s":[{"m":"become smaller or weaker","ex":"The noise fell away."}],"t":[13]},{"pv":"fall back","l":2,"s":[{"m":"move backwards","ex":"The crowd fell back."},{"m":"fall back on = use when other things fail","ex":"I can fall back on my savings."}],"t":[12]},{"pv":"fall behind","l":1,"s":[{"m":"be slower than others","ex":"Walk faster, or you\u2019ll fall behind."},{"m":"be late with something","ex":"I fell behind with my homework."}],"t":[7,8]},{"pv":"fall down","l":1,"s":[{"m":"drop to the ground","ex":"He fell down the stairs."}],"t":[12]},{"pv":"fall in","l":3,"s":[{"m":"(a roof or wall) fall to the ground","ex":"The roof fell in."}],"t":[12]},{"pv":"fall off","l":1,"s":[{"m":"drop from something","ex":"She fell off her bike."}],"t":[12]},{"pv":"fall out","l":1,"s":[{"m":"argue and stop being friends","ex":"I fell out with my brother."}],"t":[10]},{"pv":"fall over","l":1,"s":[{"m":"fall to the ground","ex":"I fell over on the ice."}],"t":[9,12]},{"pv":"fall through","l":1,"s":[{"m":"(a plan) not happen","ex":"Our holiday plans fell through."}],"t":[8,13]},{"pv":"fall for","l":2,"s":[{"m":"start to love someone","ex":"He fell for her at once."},{"m":"believe a trick","ex":"I told him a lie and he fell for it."}],"t":[10]}]},{"v":"ACT","items":[{"pv":"act up","l":3,"s":[{"m":"behave badly or stop working properly","ex":"My phone is acting up again."}],"t":[5,13]}]},{"v":"ADD","items":[{"pv":"add up","l":2,"s":[{"m":"find the total","ex":"Add up the prices, please."}],"t":[3]}]},{"v":"ANSWER","items":[{"pv":"answer back","l":3,"s":[{"m":"reply rudely","ex":"Don\u2019t answer back!"}],"t":[10,11]}]},{"v":"ASK","items":[{"pv":"ask for","l":1,"s":[{"m":"say that you want something","ex":"He asked for a glass of water."}],"t":[6,11]},{"pv":"ask out","l":2,"s":[{"m":"invite someone on a date","ex":"He asked her out for dinner."}],"t":[10]},{"pv":"ask around","l":3,"s":[{"m":"ask several people","ex":"I\u2019ll ask around and see if anyone has a spare key."}],"t":[11]}]},{"v":"BACK","items":[{"pv":"back up","l":2,"s":[{"m":"support someone","ex":"My friends backed me up."},{"m":"make a copy of computer files","ex":"Back up your photos."},{"m":"move backwards","ex":"Back up a little, please."}],"t":[5,8,10]},{"pv":"back down","l":2,"s":[{"m":"stop arguing and admit you were wrong","ex":"Neither of them would back down."}],"t":[11]},{"pv":"back off","l":3,"s":[{"m":"move away; stop annoying someone","ex":"Back off! Give him some space."}],"t":[10]},{"pv":"back out","l":3,"s":[{"m":"decide not to do something you agreed to do","ex":"He backed out of the deal."}],"t":[8]}]},{"v":"BEND","items":[{"pv":"bend down","l":3,"s":[{"m":"move the top of your body down","ex":"He bent down to tie his shoe."}],"t":[9,12]}]},{"v":"BLOW","items":[{"pv":"blow up","l":2,"s":[{"m":"explode","ex":"The car blew up."},{"m":"fill with air","ex":"We blew up the balloons."}],"t":[13]},{"pv":"blow out","l":2,"s":[{"m":"stop a flame by blowing","ex":"She blew out the candles."}],"t":[1]},{"pv":"blow away","l":3,"s":[{"m":"(the wind) carry something away","ex":"The wind blew my hat away."}],"t":[12]},{"pv":"blow over","l":3,"s":[{"m":"(a problem or a storm) end","ex":"Don\u2019t worry. The argument will blow over."}],"t":[13]}]},{"v":"BOIL","items":[{"pv":"boil over","l":3,"s":[{"m":"(a liquid) rise and flow over the side of a pan","ex":"The milk boiled over."}],"t":[2]}]},{"v":"BREAK","items":[{"pv":"break down","l":1,"s":[{"m":"(a machine) stop working","ex":"The bus broke down."},{"m":"start crying","ex":"She broke down when she heard the news."}],"t":[4,9,10,13]},{"pv":"break up","l":1,"s":[{"m":"end a relationship","ex":"They broke up last year."}],"t":[10]},{"pv":"break in","l":2,"s":[{"m":"enter a building to steal","ex":"Someone broke in while we were out."}],"t":[1]},{"pv":"break into","l":2,"s":[{"m":"enter a place by force","ex":"Thieves broke into the shop."}],"t":[1]},{"pv":"break out","l":2,"s":[{"m":"escape","ex":"Two men broke out of prison."},{"m":"(a fire, a war, an illness) start suddenly","ex":"A fire broke out in the kitchen."}],"t":[12,13]},{"pv":"break off","l":3,"s":[{"m":"separate a piece","ex":"He broke off a piece of bread."},{"m":"end suddenly","ex":"They broke off the talks."}],"t":[11,12]}]},{"v":"BRUSH","items":[{"pv":"brush up","l":3,"s":[{"m":"practise and improve a skill you learned before","ex":"I want to brush up on my French."}],"t":[7]}]},{"v":"BUILD","items":[{"pv":"build up","l":2,"s":[{"m":"increase slowly","ex":"Traffic builds up after 4 o\u2019clock."}],"t":[8,9,13]}]},{"v":"BUMP","items":[{"pv":"bump into","l":2,"s":[{"m":"meet someone by chance","ex":"I bumped into my teacher at the shops."}],"t":[10]}]},{"v":"BURN","items":[{"pv":"burn down","l":2,"s":[{"m":"be destroyed by fire","ex":"The old factory burned down."}],"t":[1,13]},{"pv":"burn out","l":3,"s":[{"m":"become very tired from too much work","ex":"Take a break or you will burn out."}],"t":[8,9]}]},{"v":"BURST","items":[{"pv":"burst into","l":3,"s":[{"m":"suddenly start (tears, laughter)","ex":"She burst into tears."}],"t":[10]}]},{"v":"CALL","items":[{"pv":"call back","l":1,"s":[{"m":"phone someone again or return a call","ex":"I\u2019ll call you back in ten minutes."}],"t":[5]},{"pv":"call off","l":2,"s":[{"m":"cancel","ex":"They called off the meeting."}],"t":[6,8]},{"pv":"call in","l":3,"s":[{"m":"(British) visit for a short time","ex":"I\u2019ll call in on my way home."}],"t":[6,10]},{"pv":"call out","l":3,"s":[{"m":"say something loudly","ex":"She called out my name."}],"t":[11]},{"pv":"call up","l":3,"s":[{"m":"(American) phone someone","ex":"He called me up last night."}],"t":[5]},{"pv":"call for","l":3,"s":[{"m":"need","ex":"This job calls for patience."}],"t":[8]}]},{"v":"CALM","items":[{"pv":"calm down","l":1,"s":[{"m":"become quiet and relaxed","ex":"Please stop shouting and calm down."}],"t":[9,10,13]}]},{"v":"CARE","items":[{"pv":"care for","l":2,"s":[{"m":"look after someone who is ill or old","ex":"She cares for her elderly father."}],"t":[9]}]},{"v":"CARRY","items":[{"pv":"carry on","l":1,"s":[{"m":"continue","ex":"Please carry on."}],"t":[7,11,13]},{"pv":"carry out","l":1,"s":[{"m":"do a job or a plan","ex":"The council carried out the repairs."}],"t":[8]}]},{"v":"CATCH","items":[{"pv":"catch up","l":2,"s":[{"m":"reach the same place or level as others","ex":"You go ahead. I\u2019ll catch up."},{"m":"talk about your news with a friend","ex":"Let\u2019s meet for coffee and catch up."}],"t":[4,7,8,10]},{"pv":"catch on","l":3,"s":[{"m":"become popular","ex":"The idea caught on quickly."},{"m":"understand at last","ex":"He is slow to catch on."}],"t":[11,13]}]},{"v":"CHECK","items":[{"pv":"check in","l":1,"s":[{"m":"say you have arrived at a hotel or airport","ex":"We checked in at 2 o\u2019clock."}],"t":[4,6]},{"pv":"check out","l":1,"s":[{"m":"pay and leave a hotel","ex":"We checked out at 10."},{"m":"(informal) look at something","ex":"Check out this photo!"}],"t":[4,5]},{"pv":"check up on","l":3,"s":[{"m":"make sure someone is all right","ex":"My mum phones to check up on me."}],"t":[9]}]},{"v":"CHEER","items":[{"pv":"cheer up","l":2,"s":[{"m":"become happier or make someone happier","ex":"Cheer up! It\u2019s nearly the weekend."}],"t":[10]},{"pv":"cheer on","l":3,"s":[{"m":"shout to encourage a person or team","ex":"We cheered on the runners."}],"t":[10]}]},{"v":"CHILL","items":[{"pv":"chill out","l":3,"s":[{"m":"(informal) relax","ex":"We chilled out at home all weekend."}],"t":[0]}]},{"v":"CHOP","items":[{"pv":"chop up","l":3,"s":[{"m":"cut into small pieces","ex":"Chop up the onions."}],"t":[2]}]},{"v":"CLEAN","items":[{"pv":"clean up","l":1,"s":[{"m":"make a place clean and tidy","ex":"Let\u2019s clean up the kitchen."}],"t":[1]}]},{"v":"CLEAR","items":[{"pv":"clear up","l":2,"s":[{"m":"tidy a place","ex":"Can you help me clear up?"},{"m":"(weather or an illness) get better","ex":"I hope it clears up this afternoon."}],"t":[1,9,13]},{"pv":"clear out","l":3,"s":[{"m":"empty a place and throw away what you don\u2019t need","ex":"I cleared out the cupboard."}],"t":[1]}]},{"v":"CLOSE","items":[{"pv":"close down","l":2,"s":[{"m":"(a business) stop for ever","ex":"The factory closed down in 2010."}],"t":[8,13]}]},{"v":"COOL","items":[{"pv":"cool down","l":2,"s":[{"m":"become less hot","ex":"Let the soup cool down."}],"t":[2,9,13]}]},{"v":"COUNT","items":[{"pv":"count on","l":2,"s":[{"m":"trust someone to help you","ex":"You can count on me."}],"t":[8,10]}]},{"v":"COVER","items":[{"pv":"cover up","l":3,"s":[{"m":"hide the truth","ex":"They tried to cover up the mistake."}],"t":[11]}]},{"v":"CROSS","items":[{"pv":"cross out","l":2,"s":[{"m":"draw a line through a word","ex":"Cross out the wrong answer."}],"t":[6,7]}]},{"v":"CUT","items":[{"pv":"cut down","l":2,"s":[{"m":"make something fall by cutting it","ex":"They cut down the tree."},{"m":"cut down on = have less of something","ex":"I\u2019m cutting down on sugar."}],"t":[2,9]},{"pv":"cut off","l":2,"s":[{"m":"stop the supply of something","ex":"They cut off the electricity."},{"m":"remove by cutting","ex":"Cut off the fat."}],"t":[1,5]},{"pv":"cut out","l":2,"s":[{"m":"remove with scissors","ex":"Cut out the picture."},{"m":"stop eating or doing something","ex":"I\u2019ve cut out sweets."}],"t":[2,9]},{"pv":"cut up","l":2,"s":[{"m":"cut into pieces","ex":"Cut up the chicken."}],"t":[2]},{"pv":"cut back","l":3,"s":[{"m":"spend or use less","ex":"We have to cut back on spending."}],"t":[3,8]}]},{"v":"DEAL","items":[{"pv":"deal with","l":1,"s":[{"m":"take action about a problem","ex":"I\u2019ll deal with it tomorrow."}],"t":[6,8]}]},{"v":"DIE","items":[{"pv":"die down","l":3,"s":[{"m":"become quieter or weaker","ex":"The wind died down."}],"t":[13]},{"pv":"die out","l":3,"s":[{"m":"disappear completely","ex":"Many languages are dying out."}],"t":[13]}]},{"v":"DO","items":[{"pv":"do up","l":2,"s":[{"m":"fasten","ex":"Do up your coat."},{"m":"(British) repair and decorate","ex":"They are doing up their flat."}],"t":[1,3]},{"pv":"do without","l":2,"s":[{"m":"manage without something","ex":"We can do without a car."}],"t":[3]}]},{"v":"DOZE","items":[{"pv":"doze off","l":3,"s":[{"m":"fall asleep","ex":"I dozed off on the sofa."}],"t":[0]}]},{"v":"DRESS","items":[{"pv":"dress up","l":2,"s":[{"m":"wear your best clothes","ex":"We dressed up for the wedding."}],"t":[3]}]},{"v":"DRINK","items":[{"pv":"drink up","l":3,"s":[{"m":"finish your drink","ex":"Drink up! It\u2019s time to go."}],"t":[2]}]},{"v":"DROP","items":[{"pv":"drop off","l":1,"s":[{"m":"take someone or something to a place and leave","ex":"I drop the children off at school."},{"m":"fall asleep","ex":"I dropped off in front of the TV."}],"t":[0,4]},{"pv":"drop in","l":2,"s":[{"m":"visit without planning","ex":"Drop in for a cup of tea."}],"t":[10]},{"pv":"drop out","l":2,"s":[{"m":"leave a course before the end","ex":"He dropped out of college."}],"t":[7]},{"pv":"drop by","l":3,"s":[{"m":"visit for a short time","ex":"I\u2019ll drop by after work."}],"t":[10]}]},{"v":"DRY","items":[{"pv":"dry up","l":3,"s":[{"m":"(a river or a lake) lose all its water","ex":"The river dried up in the summer."}],"t":[13]}]},{"v":"EAT","items":[{"pv":"eat out","l":1,"s":[{"m":"eat in a restaurant","ex":"We eat out on Fridays."}],"t":[0,2]},{"pv":"eat up","l":2,"s":[{"m":"eat all of something","ex":"Eat up your vegetables."}],"t":[2]}]},{"v":"END","items":[{"pv":"end up","l":1,"s":[{"m":"be in a place or situation in the end","ex":"We got lost and ended up in Paisley."}],"t":[4,13]}]},{"v":"FACE","items":[{"pv":"face up to","l":3,"s":[{"m":"accept a difficult fact","ex":"He must face up to his problems."}],"t":[11]}]},{"v":"FEEL","items":[{"pv":"feel like","l":1,"s":[{"m":"want something or want to do something","ex":"I feel like a cup of tea."}],"t":[2,10]}]},{"v":"FIGURE","items":[{"pv":"figure out","l":2,"s":[{"m":"understand or solve","ex":"I can\u2019t figure out this machine."}],"t":[7,11]}]},{"v":"FILL","items":[{"pv":"fill in","l":1,"s":[{"m":"complete (a form)","ex":"Fill in this form, please."}],"t":[6,7]},{"pv":"fill up","l":1,"s":[{"m":"make or become full","ex":"Fill up the kettle."}],"t":[1,2,4]},{"pv":"fill out","l":2,"s":[{"m":"(American) complete (a form)","ex":"Please fill out the application."}],"t":[6]}]},{"v":"FIND","items":[{"pv":"find out","l":1,"s":[{"m":"discover or learn information","ex":"You can find out online."}],"t":[5,6,7,11]}]},{"v":"FINISH","items":[{"pv":"finish off","l":3,"s":[{"m":"complete the last part","ex":"I\u2019ll finish off this letter."}],"t":[2]}]},{"v":"FIT","items":[{"pv":"fit in","l":2,"s":[{"m":"feel that you belong in a group","ex":"She fitted in well at her new school."},{"m":"find time or space for","ex":"The doctor can fit you in at 3."}],"t":[6,10]}]},{"v":"FOLD","items":[{"pv":"fold up","l":3,"s":[{"m":"fold into a smaller shape","ex":"Fold up the map."}],"t":[1]}]},{"v":"FOLLOW","items":[{"pv":"follow up","l":3,"s":[{"m":"do something more about an earlier action","ex":"I\u2019ll follow up with an email."}],"t":[6,8]}]},{"v":"FREAK","items":[{"pv":"freak out","l":3,"s":[{"m":"(informal) become very upset or frightened","ex":"I freaked out when I saw the bill."}],"t":[10]}]},{"v":"GIVE","items":[{"pv":"give up","l":1,"s":[{"m":"stop trying","ex":"It\u2019s too hard. I give up!"},{"m":"stop a habit","ex":"He gave up smoking."}],"t":[2,9,13]},{"pv":"give back","l":1,"s":[{"m":"return something","ex":"Give me back my pen!"}],"t":[12]},{"pv":"give away","l":2,"s":[{"m":"give something for free","ex":"I gave my old clothes away."}],"t":[3]},{"pv":"give in","l":2,"s":[{"m":"agree after saying no","ex":"She asked ten times, so I gave in."},{"m":"(British) hand in work","ex":"Give in your homework on Monday."}],"t":[7,11]},{"pv":"give out","l":2,"s":[{"m":"give to many people","ex":"The teacher gave out the books."}],"t":[7,12]}]},{"v":"GROW","items":[{"pv":"grow up","l":1,"s":[{"m":"change from a child to an adult","ex":"I grew up in a small village."}],"t":[10,13]},{"pv":"grow out of","l":3,"s":[{"m":"become too big for (clothes)","ex":"He has grown out of his shoes."}],"t":[3]}]},{"v":"HAND","items":[{"pv":"hand in","l":1,"s":[{"m":"give work or a form to a teacher or an office","ex":"Hand in your form at the desk."}],"t":[6,7]},{"pv":"hand out","l":2,"s":[{"m":"give one to each person","ex":"She handed out the worksheets."}],"t":[7]},{"pv":"hand over","l":2,"s":[{"m":"give something to someone else","ex":"Hand over the keys."}],"t":[8,12]},{"pv":"hand down","l":3,"s":[{"m":"give to a younger person in the family","ex":"This ring was handed down from my grandmother."}],"t":[10]}]},{"v":"HANG","items":[{"pv":"hang on","l":1,"s":[{"m":"wait","ex":"Hang on a minute."},{"m":"hold tightly","ex":"Hang on to the rail."}],"t":[5,6]},{"pv":"hang up","l":1,"s":[{"m":"end a phone call","ex":"Don\u2019t hang up!"},{"m":"put on a hook or hanger","ex":"Hang up your coat."}],"t":[1,5]},{"pv":"hang out","l":2,"s":[{"m":"(informal) spend time with friends","ex":"We hang out in the park."},{"m":"put washing outside to dry","ex":"I hung the washing out."}],"t":[1,10]},{"pv":"hang around","l":3,"s":[{"m":"wait or stay with nothing to do","ex":"We hung around for an hour."}],"t":[10]}]},{"v":"HEAD","items":[{"pv":"head for","l":3,"s":[{"m":"go towards","ex":"We headed for the exit."}],"t":[4,12]}]},{"v":"HEAR","items":[{"pv":"hear from","l":2,"s":[{"m":"get a message or a call from someone","ex":"I haven\u2019t heard from my brother this week."}],"t":[5,10]},{"pv":"hear of","l":2,"s":[{"m":"know that something exists","ex":"I\u2019ve never heard of that film."}],"t":[11]}]},{"v":"HEAT","items":[{"pv":"heat up","l":2,"s":[{"m":"make or become hot","ex":"Heat up the soup."}],"t":[1,2,13]}]},{"v":"HELP","items":[{"pv":"help out","l":2,"s":[{"m":"help someone who is busy or in difficulty","ex":"My neighbour helps out with the shopping."}],"t":[8,10]}]},{"v":"HOLD","items":[{"pv":"hold on","l":1,"s":[{"m":"wait","ex":"Hold on a minute."},{"m":"hold tightly","ex":"Hold on to your hat!"}],"t":[5,6]},{"pv":"hold up","l":2,"s":[{"m":"delay","ex":"The traffic held us up."}],"t":[4,6,13]},{"pv":"hold back","l":3,"s":[{"m":"stop something from moving forward","ex":"The police held back the crowd."}],"t":[12]}]},{"v":"HURRY","items":[{"pv":"hurry up","l":1,"s":[{"m":"do something faster","ex":"Hurry up! The bus is coming."}],"t":[0,4]}]},{"v":"JOIN","items":[{"pv":"join in","l":2,"s":[{"m":"take part with other people","ex":"Everyone joined in the singing."}],"t":[7,10]}]},{"v":"KEEP","items":[{"pv":"keep on","l":1,"s":[{"m":"continue","ex":"Keep on walking until you see the bank."}],"t":[13]},{"pv":"keep up","l":2,"s":[{"m":"go as fast as someone else","ex":"Slow down! I can\u2019t keep up."},{"m":"continue at the same level","ex":"Good work. Keep it up!"}],"t":[7,8]},{"pv":"keep away","l":2,"s":[{"m":"not go near","ex":"Keep away from the fire."}],"t":[4,12]},{"pv":"keep out","l":2,"s":[{"m":"not go into a place","ex":"The sign says \u201cKeep out\u201d."}],"t":[4,12]},{"pv":"keep off","l":2,"s":[{"m":"not walk on or touch","ex":"Keep off the grass."}],"t":[4,12]}]},{"v":"KICK","items":[{"pv":"kick off","l":3,"s":[{"m":"(a football match) start","ex":"The match kicks off at 3."}],"t":[13]},{"pv":"kick out","l":3,"s":[{"m":"(informal) make someone leave","ex":"He was kicked out of the club."}],"t":[8,10]}]},{"v":"KNOCK","items":[{"pv":"knock down","l":2,"s":[{"m":"hit someone and make them fall","ex":"A car knocked him down."},{"m":"destroy a building","ex":"They knocked down the old school."}],"t":[1,12]},{"pv":"knock over","l":2,"s":[{"m":"hit something so that it falls","ex":"I knocked over my cup."}],"t":[1,12]},{"pv":"knock out","l":3,"s":[{"m":"make someone unconscious","ex":"The fall knocked him out."}],"t":[9]}]},{"v":"LAY","items":[{"pv":"lay off","l":3,"s":[{"m":"stop employing someone because there is no work","ex":"The factory laid off fifty workers."}],"t":[8]}]},{"v":"LEAVE","items":[{"pv":"leave out","l":2,"s":[{"m":"not include","ex":"You left out a word."}],"t":[7,10]},{"pv":"leave behind","l":2,"s":[{"m":"not take something with you","ex":"I left my umbrella behind."}],"t":[4]}]},{"v":"LET","items":[{"pv":"let down","l":2,"s":[{"m":"disappoint someone","ex":"He promised to come, but he let me down."}],"t":[10,13]},{"pv":"let in","l":2,"s":[{"m":"allow to enter","ex":"Let me in! It\u2019s raining."}],"t":[1,12]},{"pv":"let out","l":3,"s":[{"m":"allow to leave","ex":"Let the dog out."}],"t":[1,12]},{"pv":"let off","l":3,"s":[{"m":"not punish","ex":"The police let him off with a warning."}],"t":[6]}]},{"v":"LIE","items":[{"pv":"lie down","l":1,"s":[{"m":"rest flat on a bed or the floor","ex":"I\u2019m going to lie down for an hour."}],"t":[0,9,12]}]},{"v":"LINE","items":[{"pv":"line up","l":2,"s":[{"m":"stand in a row","ex":"The children lined up at the door."}],"t":[4,6,12]}]},{"v":"LIVE","items":[{"pv":"live on","l":3,"s":[{"m":"eat only one kind of food","ex":"They live on rice and vegetables."}],"t":[2]}]},{"v":"LOCK","items":[{"pv":"lock up","l":2,"s":[{"m":"lock all the doors of a building","ex":"Don\u2019t forget to lock up."}],"t":[1]},{"pv":"lock out","l":3,"s":[{"m":"stop someone getting in by locking the door","ex":"I locked myself out."}],"t":[1]}]},{"v":"LOG","items":[{"pv":"log in","l":1,"s":[{"m":"start using a computer system with your name and password","ex":"Log in with your email address."}],"t":[5]},{"pv":"log out","l":1,"s":[{"m":"finish using a computer system","ex":"Log out when you finish."}],"t":[5]}]},{"v":"MAKE","items":[{"pv":"make up","l":1,"s":[{"m":"invent (a story, an excuse)","ex":"He made up an excuse."},{"m":"become friends again","ex":"They argued, but they soon made up."}],"t":[10,11]},{"pv":"make out","l":2,"s":[{"m":"see or hear with difficulty","ex":"I can\u2019t make out what he is saying."}],"t":[7,11]},{"pv":"make up for","l":3,"s":[{"m":"do something good after something bad","ex":"I\u2019m sorry I\u2019m late. I\u2019ll make up for it."}],"t":[10]}]},{"v":"MEET","items":[{"pv":"meet up","l":2,"s":[{"m":"meet someone you have arranged to see","ex":"Let\u2019s meet up on Saturday."}],"t":[10]}]},{"v":"MESS","items":[{"pv":"mess up","l":2,"s":[{"m":"(informal) do something badly","ex":"I messed up the exam."}],"t":[13]},{"pv":"mess about","l":3,"s":[{"m":"(British, informal) behave in a silly way","ex":"Stop messing about!"}],"t":[7,10]}]},{"v":"MISS","items":[{"pv":"miss out","l":2,"s":[{"m":"not get the chance to do something good","ex":"Come with us, or you\u2019ll miss out."}],"t":[13]}]},{"v":"MIX","items":[{"pv":"mix up","l":2,"s":[{"m":"confuse two people or things","ex":"I always mix up their names."}],"t":[7,11]}]},{"v":"MOVE","items":[{"pv":"move in","l":1,"s":[{"m":"start living in a new home","ex":"We moved in last week."}],"t":[1]},{"pv":"move out","l":1,"s":[{"m":"leave your home to live somewhere else","ex":"He moved out in May."}],"t":[1]},{"pv":"move on","l":2,"s":[{"m":"go to the next thing","ex":"Let\u2019s move on to the next question."}],"t":[10,13]},{"pv":"move over","l":3,"s":[{"m":"change position to make space","ex":"Move over, please. I want to sit down."}],"t":[4,12]}]},{"v":"NAME","items":[{"pv":"name after","l":3,"s":[{"m":"give a baby the same name as someone","ex":"She was named after her aunt."}],"t":[10]}]},{"v":"NOTE","items":[{"pv":"note down","l":3,"s":[{"m":"write something so that you remember it","ex":"Note down the date."}],"t":[6,7]}]},{"v":"OPEN","items":[{"pv":"open up","l":2,"s":[{"m":"open a shop or a building","ex":"The caf\u00e9 opens up at 8."},{"m":"talk about your feelings","ex":"He finally opened up to me."}],"t":[10,11]}]},{"v":"OWN","items":[{"pv":"own up","l":3,"s":[{"m":"say that you did something wrong","ex":"Nobody owned up to breaking the window."}],"t":[10,11]}]},{"v":"PACK","items":[{"pv":"pack up","l":3,"s":[{"m":"put your things in bags before you leave","ex":"We packed up and went home."}],"t":[1]}]},{"v":"PAIR","items":[{"pv":"pair up","l":2,"s":[{"m":"make a group of two","ex":"Pair up with the person next to you."}],"t":[7]}]},{"v":"PASS","items":[{"pv":"pass away","l":2,"s":[{"m":"die (a polite way to say it)","ex":"Her grandfather passed away last year."}],"t":[9,10]},{"pv":"pass out","l":2,"s":[{"m":"faint","ex":"It was so hot that she passed out."}],"t":[9]},{"pv":"pass on","l":2,"s":[{"m":"give a message or a thing to someone else","ex":"I\u2019ll pass on your message."}],"t":[8,11]},{"pv":"pass by","l":3,"s":[{"m":"go past","ex":"A bus passed by."}],"t":[4,12]}]},{"v":"PAY","items":[{"pv":"pay back","l":1,"s":[{"m":"return money you borrowed","ex":"I\u2019ll pay you back on Friday."}],"t":[3]},{"pv":"pay off","l":2,"s":[{"m":"finish paying a debt","ex":"They paid off the loan."},{"m":"bring a good result","ex":"All her hard work paid off."}],"t":[3,8,13]},{"pv":"pay in","l":3,"s":[{"m":"(British) put money into a bank account","ex":"I paid in a cheque."}],"t":[3,6]}]},{"v":"PICK","items":[{"pv":"pick up","l":1,"s":[{"m":"lift","ex":"Pick up your bag."},{"m":"collect someone or something","ex":"I pick up my son at 3 o\u2019clock."},{"m":"learn without lessons","ex":"She picked up English quickly."}],"t":[0,1,4,5,7,12]},{"pv":"pick out","l":2,"s":[{"m":"choose","ex":"She picked out a red dress."}],"t":[3]},{"pv":"pick on","l":3,"s":[{"m":"be unkind to one person again and again","ex":"The older boys picked on him."}],"t":[10]}]},{"v":"PILE","items":[{"pv":"pile up","l":3,"s":[{"m":"grow into a large amount","ex":"The dishes are piling up."}],"t":[1,13]}]},{"v":"PLUG","items":[{"pv":"plug in","l":1,"s":[{"m":"connect to the electricity","ex":"Plug in your phone."}],"t":[1,5]}]},{"v":"POINT","items":[{"pv":"point out","l":1,"s":[{"m":"show or tell someone something","ex":"She pointed out my mistake."}],"t":[6,11]}]},{"v":"POP","items":[{"pv":"pop in","l":3,"s":[{"m":"(British, informal) visit for a short time","ex":"I\u2019ll pop in on my way home."}],"t":[10]}]},{"v":"POUR","items":[{"pv":"pour down","l":2,"s":[{"m":"(British) rain heavily","ex":"It\u2019s pouring down."}],"t":[13]}]},{"v":"PRINT","items":[{"pv":"print out","l":2,"s":[{"m":"make a paper copy from a computer","ex":"Print out two copies."}],"t":[5,6]}]},{"v":"QUEUE","items":[{"pv":"queue up","l":2,"s":[{"m":"(British) stand in a line to wait","ex":"We queued up for the bus."}],"t":[3,4,6]}]},{"v":"REACH","items":[{"pv":"reach out","l":3,"s":[{"m":"try to contact or help someone","ex":"Reach out to a friend if you need help."}],"t":[5]}]},{"v":"READ","items":[{"pv":"read out","l":3,"s":[{"m":"read something so that people can hear","ex":"She read out the names."}],"t":[7,11]},{"pv":"read through","l":3,"s":[{"m":"read from start to end to check","ex":"Read through your answers."}],"t":[6,7]}]},{"v":"RELY","items":[{"pv":"rely on","l":2,"s":[{"m":"need or trust","ex":"I rely on the bus to get to work."}],"t":[8,10]}]},{"v":"RING","items":[{"pv":"ring back","l":3,"s":[{"m":"(British) phone someone again","ex":"Can you ring back later?"}],"t":[5]}]},{"v":"RIP","items":[{"pv":"rip off","l":3,"s":[{"m":"(informal) charge too much money","ex":"That shop ripped me off."}],"t":[3]}]},{"v":"ROLL","items":[{"pv":"roll up","l":3,"s":[{"m":"fold something into a tube shape","ex":"Roll up your sleeves."}],"t":[1,3,9]}]},{"v":"RUB","items":[{"pv":"rub out","l":3,"s":[{"m":"(British) remove pencil marks","ex":"Rub out the mistake."}],"t":[7]}]},{"v":"RULE","items":[{"pv":"rule out","l":3,"s":[{"m":"decide that something is not possible","ex":"We can\u2019t rule out rain."}],"t":[9,11]}]},{"v":"RUN","items":[{"pv":"run out","l":1,"s":[{"m":"have no more left","ex":"We\u2019ve run out of milk."}],"t":[1,2,3,13]},{"pv":"run away","l":1,"s":[{"m":"leave a place quickly to escape","ex":"The cat ran away."}],"t":[12]},{"pv":"run into","l":2,"s":[{"m":"meet someone by chance","ex":"I ran into an old friend."},{"m":"hit something while driving","ex":"He ran into a wall."}],"t":[4,10]},{"pv":"run over","l":2,"s":[{"m":"hit a person or an animal with a vehicle","ex":"Be careful! You nearly ran over that dog."}],"t":[4]},{"pv":"run after","l":3,"s":[{"m":"chase","ex":"The dog ran after the ball."}],"t":[12]},{"pv":"run through","l":3,"s":[{"m":"practise or explain quickly","ex":"Let\u2019s run through the song again."}],"t":[7]}]},{"v":"SAVE","items":[{"pv":"save up","l":2,"s":[{"m":"keep money to buy something later","ex":"I\u2019m saving up for a bike."}],"t":[3]}]},{"v":"SCROLL","items":[{"pv":"scroll down","l":2,"s":[{"m":"move down a screen","ex":"Scroll down to the bottom of the page."}],"t":[5]}]},{"v":"SEE","items":[{"pv":"see off","l":3,"s":[{"m":"go to the station or airport to say goodbye","ex":"We saw her off at the airport."}],"t":[4,10]},{"pv":"see to","l":3,"s":[{"m":"deal with something","ex":"I\u2019ll see to the dishes."}],"t":[8]}]},{"v":"SELL","items":[{"pv":"sell out","l":2,"s":[{"m":"sell all of something","ex":"The tickets sold out in an hour."}],"t":[3]}]},{"v":"SEND","items":[{"pv":"send back","l":2,"s":[{"m":"return something you don\u2019t want","ex":"The shoes were too small, so I sent them back."}],"t":[3,6]},{"pv":"send off","l":3,"s":[{"m":"post something","ex":"I sent off the form yesterday."}],"t":[6]},{"pv":"send out","l":3,"s":[{"m":"send to many people","ex":"The school sent out letters to all the parents."}],"t":[6]}]},{"v":"SET","items":[{"pv":"set up","l":1,"s":[{"m":"start or organise","ex":"They set up a new email address."}],"t":[5,8]},{"pv":"set off","l":1,"s":[{"m":"start a journey","ex":"We set off at 8 o\u2019clock."}],"t":[0,4]},{"pv":"set out","l":2,"s":[{"m":"start a journey","ex":"They set out early."},{"m":"arrange things so that people can use them","ex":"She set out the chairs."}],"t":[4,13]},{"pv":"set aside","l":3,"s":[{"m":"keep for a special purpose","ex":"Set aside ten minutes a day for reading."}],"t":[3,8]}]},{"v":"SETTLE","items":[{"pv":"settle down","l":2,"s":[{"m":"become calm","ex":"Settle down, children."},{"m":"start a quiet, steady life","ex":"They got married and settled down."}],"t":[10,13]},{"pv":"settle in","l":2,"s":[{"m":"become comfortable in a new place","ex":"How are you settling in?"}],"t":[1]}]},{"v":"SHARE","items":[{"pv":"share out","l":3,"s":[{"m":"(British) divide between people","ex":"We shared out the sweets."}],"t":[2]}]},{"v":"SHOP","items":[{"pv":"shop around","l":3,"s":[{"m":"compare prices in different shops","ex":"Shop around before you buy a phone."}],"t":[3]}]},{"v":"SHOW","items":[{"pv":"show up","l":2,"s":[{"m":"arrive","ex":"He showed up an hour late."}],"t":[6,13]},{"pv":"show off","l":2,"s":[{"m":"try to make people admire you","ex":"Stop showing off!"}],"t":[10]},{"pv":"show around","l":3,"s":[{"m":"take someone to see a place","ex":"I\u2019ll show you around the building."}],"t":[4]}]},{"v":"SHUT","items":[{"pv":"shut down","l":2,"s":[{"m":"(a business or a machine) stop working","ex":"The computer shut down."}],"t":[5,8]},{"pv":"shut up","l":2,"s":[{"m":"(rude) stop talking","ex":"Oh, shut up!"}],"t":[11]},{"pv":"shut off","l":3,"s":[{"m":"stop the supply of water, gas or power","ex":"Shut off the water before you fix the tap."}],"t":[1]}]},{"v":"SIGN","items":[{"pv":"sign up","l":1,"s":[{"m":"put your name down for a course or a service","ex":"I signed up for an English class."}],"t":[5,6,7]},{"pv":"sign in","l":2,"s":[{"m":"write your name when you arrive","ex":"Please sign in at reception."}],"t":[5,6]},{"pv":"sign out","l":3,"s":[{"m":"write your name when you leave","ex":"Remember to sign out."}],"t":[5,6]}]},{"v":"SIT","items":[{"pv":"sit down","l":1,"s":[{"m":"take a seat","ex":"Please sit down."}],"t":[0,12]},{"pv":"sit up","l":2,"s":[{"m":"move from lying to sitting","ex":"Sit up and drink your tea."}],"t":[9,12]},{"pv":"sit back","l":3,"s":[{"m":"relax in a chair","ex":"Sit back and enjoy the film."}],"t":[0]}]},{"v":"SLEEP","items":[{"pv":"sleep in","l":2,"s":[{"m":"sleep later than usual in the morning","ex":"I sleep in on Sundays."}],"t":[0]},{"pv":"sleep over","l":3,"s":[{"m":"stay the night at someone\u2019s home","ex":"My niece is sleeping over tonight."}],"t":[10]}]},{"v":"SLOW","items":[{"pv":"slow down","l":1,"s":[{"m":"go or speak more slowly","ex":"Slow down! You\u2019re speaking too fast."}],"t":[4,13]}]},{"v":"SORT","items":[{"pv":"sort out","l":1,"s":[{"m":"put in order","ex":"I need to sort out my papers."},{"m":"solve a problem","ex":"The landlord sorted out the heating."}],"t":[6,8]}]},{"v":"SOUND","items":[{"pv":"sound out","l":3,"s":[{"m":"say the sounds of a word slowly to read it","ex":"Sound out the word: c-a-t."}],"t":[7]}]},{"v":"SPEAK","items":[{"pv":"speak up","l":2,"s":[{"m":"speak louder","ex":"Can you speak up? I can\u2019t hear you."}],"t":[5,7,11]},{"pv":"speak out","l":3,"s":[{"m":"say in public what you think","ex":"She spoke out against the plan."}],"t":[11]}]},{"v":"SPEED","items":[{"pv":"speed up","l":1,"s":[{"m":"go or happen faster","ex":"Can you speed up? We\u2019re late."}],"t":[4,13]}]},{"v":"SPELL","items":[{"pv":"spell out","l":2,"s":[{"m":"say or write the letters of a word in order","ex":"Can you spell out your surname?"}],"t":[6,7]}]},{"v":"SPLIT","items":[{"pv":"split up","l":2,"s":[{"m":"end a relationship","ex":"They split up after two years."},{"m":"divide into groups","ex":"The teacher split us up into pairs."}],"t":[7,10]}]},{"v":"STAND","items":[{"pv":"stand up","l":1,"s":[{"m":"get on your feet","ex":"Everyone stood up."}],"t":[12]},{"pv":"stand out","l":2,"s":[{"m":"be easy to see or notice","ex":"Her red coat stands out."}],"t":[11,13]},{"pv":"stand for","l":2,"s":[{"m":"be a short form of","ex":"UK stands for United Kingdom."}],"t":[11]},{"pv":"stand by","l":3,"s":[{"m":"support someone in a difficult time","ex":"Her family stood by her."}],"t":[10]},{"pv":"stand up for","l":3,"s":[{"m":"defend","ex":"You must stand up for your rights."}],"t":[10]},{"pv":"stand back","l":2,"s":[{"m":"move back from something","ex":"Stand back from the doors."}],"t":[4,12]}]},{"v":"START","items":[{"pv":"start over","l":3,"s":[{"m":"(American) begin again","ex":"I made a mistake, so I started over."}],"t":[13]},{"pv":"start out","l":3,"s":[{"m":"begin your working life","ex":"She started out as a cleaner."}],"t":[8,13]},{"pv":"start up","l":3,"s":[{"m":"begin a business","ex":"He started up his own business."}],"t":[5,8]}]},{"v":"STAY","items":[{"pv":"stay in","l":1,"s":[{"m":"not go out","ex":"I\u2019m staying in tonight."}],"t":[0]},{"pv":"stay up","l":1,"s":[{"m":"not go to bed","ex":"We stayed up until midnight."}],"t":[0]},{"pv":"stay out","l":2,"s":[{"m":"not come home until late","ex":"Don\u2019t stay out too late."}],"t":[0]},{"pv":"stay away","l":2,"s":[{"m":"not go near","ex":"Stay away from the edge."}],"t":[12]}]},{"v":"STEP","items":[{"pv":"step down","l":3,"s":[{"m":"leave an important job","ex":"The manager stepped down."}],"t":[8]}]},{"v":"STICK","items":[{"pv":"stick to","l":2,"s":[{"m":"not change (a plan, a rule)","ex":"Let\u2019s stick to the plan."}],"t":[11]},{"pv":"stick out","l":3,"s":[{"m":"be further out than the rest","ex":"His ears stick out."}],"t":[9,12]}]},{"v":"STOCK","items":[{"pv":"stock up","l":3,"s":[{"m":"buy a lot of something to use later","ex":"We stocked up on rice."}],"t":[2]}]},{"v":"SUM","items":[{"pv":"sum up","l":3,"s":[{"m":"give the main points in a few words","ex":"To sum up, we need more time."}],"t":[7,11]}]},{"v":"SWEEP","items":[{"pv":"sweep up","l":3,"s":[{"m":"clean the floor with a brush","ex":"Sweep up the leaves."}],"t":[1]}]},{"v":"SWELL","items":[{"pv":"swell up","l":3,"s":[{"m":"(a part of the body) become bigger","ex":"My ankle swelled up."}],"t":[9]}]},{"v":"SWITCH","items":[{"pv":"switch on","l":1,"s":[{"m":"start a machine or a light","ex":"Switch on the light."}],"t":[1,5]},{"pv":"switch off","l":1,"s":[{"m":"stop a machine or a light","ex":"Switch off your phone, please."}],"t":[1,5]}]},{"v":"TALK","items":[{"pv":"talk over","l":3,"s":[{"m":"discuss","ex":"Let\u2019s talk it over."}],"t":[11]},{"pv":"talk into","l":3,"s":[{"m":"persuade someone to do something","ex":"She talked me into going."}],"t":[10,11]}]},{"v":"TEAM","items":[{"pv":"team up","l":3,"s":[{"m":"work together with someone","ex":"We teamed up for the quiz."}],"t":[7,8]}]},{"v":"TEAR","items":[{"pv":"tear up","l":2,"s":[{"m":"tear into small pieces","ex":"He tore up the letter."}],"t":[12]}]},{"v":"TELL","items":[{"pv":"tell off","l":2,"s":[{"m":"speak angrily to someone who did something wrong","ex":"The teacher told him off for being late."}],"t":[7,10]},{"pv":"tell apart","l":3,"s":[{"m":"see the difference between","ex":"I can\u2019t tell the twins apart."}],"t":[11]}]},{"v":"THINK","items":[{"pv":"think over","l":2,"s":[{"m":"think carefully before you decide","ex":"I need time to think it over."}],"t":[7,11]},{"pv":"think up","l":3,"s":[{"m":"invent an idea","ex":"Who thought up that name?"}],"t":[11]}]},{"v":"THROW","items":[{"pv":"throw away","l":1,"s":[{"m":"put in the bin","ex":"Throw the tea bag away."}],"t":[1]},{"pv":"throw out","l":2,"s":[{"m":"put in the bin","ex":"I threw out my old shoes."},{"m":"make someone leave","ex":"They threw him out of the club."}],"t":[1]},{"pv":"throw up","l":2,"s":[{"m":"(informal) be sick","ex":"The baby threw up."}],"t":[9]}]},{"v":"TICK","items":[{"pv":"tick off","l":3,"s":[{"m":"(British) put a tick next to something on a list","ex":"Tick off the names on the list."}],"t":[7]}]},{"v":"TIDY","items":[{"pv":"tidy up","l":1,"s":[{"m":"make a place neat","ex":"Tidy up your room."}],"t":[0,1]}]},{"v":"TIE","items":[{"pv":"tie up","l":3,"s":[{"m":"fasten with string or rope","ex":"Tie up the bag."}],"t":[1]}]},{"v":"TOP","items":[{"pv":"top up","l":2,"s":[{"m":"(British) add more money or more drink","ex":"I need to top up my phone."}],"t":[2,3,5]}]},{"v":"TRIP","items":[{"pv":"trip over","l":2,"s":[{"m":"hit your foot on something and fall","ex":"I tripped over the cat."}],"t":[9,12]}]},{"v":"TRY","items":[{"pv":"try on","l":1,"s":[{"m":"put on clothes to see if they fit","ex":"Can I try on these shoes?"}],"t":[3]},{"pv":"try out","l":2,"s":[{"m":"test something new","ex":"Try out the new computer."}],"t":[13]}]},{"v":"TYPE","items":[{"pv":"type in","l":2,"s":[{"m":"write on a computer or a phone","ex":"Type in your password."}],"t":[5]}]},{"v":"USE","items":[{"pv":"use up","l":2,"s":[{"m":"use all of something","ex":"We\u2019ve used up all the paper."}],"t":[1,2,13]}]},{"v":"WAKE","items":[{"pv":"wake up","l":1,"s":[{"m":"stop sleeping","ex":"I woke up early today."}],"t":[0]}]},{"v":"WALK","items":[{"pv":"walk out","l":3,"s":[{"m":"leave suddenly because you are angry","ex":"He walked out of the meeting."}],"t":[8,12]},{"pv":"walk away","l":3,"s":[{"m":"leave a difficult situation","ex":"Don\u2019t walk away from the problem."}],"t":[12]}]},{"v":"WARM","items":[{"pv":"warm up","l":2,"s":[{"m":"become warmer","ex":"Come in and warm up."},{"m":"do gentle exercise before sport","ex":"We warm up before the match."}],"t":[2,9,13]}]},{"v":"WASH","items":[{"pv":"wash up","l":1,"s":[{"m":"(British) wash the dishes","ex":"I\u2019ll wash up after dinner."}],"t":[0,2]}]},{"v":"WATCH","items":[{"pv":"watch out","l":1,"s":[{"m":"be careful","ex":"Watch out! The floor is wet."}],"t":[4,12]}]},{"v":"WEAR","items":[{"pv":"wear out","l":2,"s":[{"m":"use something until it is no good","ex":"I\u2019ve worn out my shoes."},{"m":"make very tired","ex":"The children wear me out."}],"t":[1,3]},{"pv":"wear off","l":3,"s":[{"m":"slowly disappear","ex":"The pain wore off."}],"t":[9,13]}]},{"v":"WIPE","items":[{"pv":"wipe up","l":3,"s":[{"m":"clean liquid with a cloth","ex":"Wipe up the milk."}],"t":[1]}]},{"v":"WORK","items":[{"pv":"work out","l":1,"s":[{"m":"understand, calculate or solve","ex":"I can\u2019t work out this problem."},{"m":"exercise","ex":"She works out at the gym."},{"m":"end well","ex":"I hope it all works out."}],"t":[7,9,11,13]},{"pv":"work on","l":2,"s":[{"m":"spend time making or improving","ex":"I\u2019m working on my spelling."}],"t":[7,8]}]},{"v":"WRAP","items":[{"pv":"wrap up","l":2,"s":[{"m":"cover in paper","ex":"I wrapped up the present."},{"m":"wear warm clothes","ex":"Wrap up! It\u2019s cold outside."}],"t":[3,13]}]},{"v":"WRITE","items":[{"pv":"write down","l":1,"s":[{"m":"write on paper so that you remember","ex":"Write down the address."}],"t":[6,7]},{"pv":"write back","l":3,"s":[{"m":"reply to a letter or a message","ex":"She wrote back the next day."}],"t":[5]},{"pv":"write out","l":3,"s":[{"m":"write in full","ex":"Write out the sentence again."}],"t":[6,7]}]},{"v":"ZIP","items":[{"pv":"zip up","l":3,"s":[{"m":"close with a zip","ex":"Zip up your jacket."}],"t":[3]}]},{"v":"ZOOM","items":[{"pv":"zoom in","l":3,"s":[{"m":"make a picture look bigger on a screen","ex":"Zoom in on the map."}],"t":[5]}]},{"v":"FIGHT","items":[{"pv":"fight off","l":3,"s":[{"m":"defeat an illness","ex":"My body is fighting off a cold."}],"t":[9]}]},{"v":"LIFT","items":[{"pv":"lift up","l":3,"s":[{"m":"raise","ex":"Lift up your arms."}],"t":[9,12]}]},{"v":"SLIP","items":[{"pv":"slip over","l":3,"s":[{"m":"(British) fall on a wet or icy floor","ex":"I slipped over on the ice."}],"t":[9,12]}]},{"v":"SING","items":[{"pv":"sing along","l":2,"s":[{"m":"sing with a song or a singer","ex":"Everyone sang along."}],"t":[7]}]},{"v":"SPREAD","items":[{"pv":"spread out","l":3,"s":[{"m":"move apart to cover more space","ex":"Spread out so that everyone has room."}],"t":[12]}]},{"v":"BOOK","items":[{"pv":"book in","l":3,"s":[{"m":"(British) arrange a time or a place","ex":"I booked in for a haircut on Friday."}],"t":[6]}]},{"v":"LIGHT","items":[{"pv":"light up","l":3,"s":[{"m":"make or become bright","ex":"The fireworks lit up the sky."}],"t":[1,13]}]},{"v":"PLAN","items":[{"pv":"plan ahead","l":3,"s":[{"m":"make plans for the future","ex":"It helps to plan ahead."}],"t":[7]}]},{"v":"STOP","items":[{"pv":"stop by","l":3,"s":[{"m":"visit for a short time","ex":"Stop by the office before you leave."}],"t":[6]}]}];
+  var TOPICS = [{"n":"Daily routine","h":"wake up, set off, stay in"},{"n":"Home and housework","h":"tidy up, switch on, lock up"},{"n":"Food and drink","h":"eat out, heat up, run out"},{"n":"Clothes, shopping and money","h":"try on, take back, save up"},{"n":"Travel and getting around","h":"get on, set off, slow down"},{"n":"Phone and computer","h":"call back, log in, plug in"},{"n":"Forms, offices and appointments","h":"fill in, sign in, put off"},{"n":"School and study","h":"hand in, look up, catch up"},{"n":"Work","h":"take on, carry out, deal with"},{"n":"Health and body","h":"look after, get over, lie down"},{"n":"Family, friends and feelings","h":"get on, fall out, cheer up"},{"n":"Talking and ideas","h":"speak up, point out, find out"},{"n":"Moving and places","h":"come in, sit down, turn around"},{"n":"Things that happen and change","h":"go on, end up, turn out"}];
+  var LABELS = /^\(((?:British|American|formal|informal|old|rude)(?:, (?:British|American|formal|informal|old|rude))*)\)\s+/;
+  var LEVELS = [null, "Learn these first", "Other useful verbs", "More verbs"];
+  // The small words, in the order used inside each verb: opposites sit next to each other.
+  var PARTS = ["in", "out", "up", "down", "on", "off", "back", "away", "over", "around", "round", "through",
+               "along", "about", "ahead", "forward", "together", "apart", "aside", "across", "after",
+               "for", "with", "into", "to", "by", "behind"];
+  var state = { view: "home", open: null, q: "", az: false, azq: false };
+  var top = document.getElementById("top");
+  var homeBtn = document.getElementById("home");
+  var browse = document.getElementById("browse");
+  var results = document.getElementById("results");
+  var about = document.getElementById("about");
+  var uid = 0;
+
+  // Rank the base verbs: the ones with most phrasal verbs first. No alphabet.
+  DATA.forEach(function (f, i) {
+    f.idx = i;
+    f.top = f.items.filter(function (it) { return it.l === 1; }).length;
+  });
+  var RANKED = DATA.slice().sort(function (a, b) {
+    return b.items.length - a.items.length || b.top - a.top || a.idx - b.idx;
+  });
+  var ALL = [];
+  RANKED.forEach(function (f, rank) {
+    f.items.forEach(function (it, j) {
+      var words = it.pv.split(" ");
+      var p = PARTS.indexOf(words[1]);
+      it.base = f.v;
+      it.fam = rank;
+      it.part = (p === -1 ? PARTS.length : p) * 100 + words.length * 10;
+      it.seq = j;
+      it.word = words[1];
+      ALL.push(it);
+    });
+  });
+  // For the importance lists: the families with the most "learn these first" verbs come first.
+  RANKED.slice().sort(function (a, b) {
+    return b.top - a.top || b.items.length - a.items.length || a.idx - b.idx;
+  }).forEach(function (f, rank) { f.items.forEach(function (it) { it.imp = rank; }); });
+  function byImportantFamily(a, b) { return a.imp - b.imp || a.part - b.part || a.seq - b.seq; }
+  function byFamily(a, b) { return a.fam - b.fam || a.part - b.part || a.seq - b.seq; }
+  function byPart(a, b) { return a.part - b.part || a.fam - b.fam || a.seq - b.seq; }
+  function byPv(a, b) { return a.pv < b.pv ? -1 : a.pv > b.pv ? 1 : 0; }
+  ALL.sort(byFamily);
+  var BIG = RANKED.filter(function (f) { return f.items.length >= 4; });
+  var OTHER = ALL.filter(function (it) { return RANKED[it.fam].items.length < 4; });
+  // The little words, in the PARTS order. Words with only one or two verbs share a last group.
+  var WORDS = [], wordMap = {}, RARE = [];
+  ALL.forEach(function (it) {
+    if (!wordMap[it.word]) { wordMap[it.word] = { w: it.word, items: [] }; WORDS.push(wordMap[it.word]); }
+    wordMap[it.word].items.push(it);
+  });
+  WORDS = WORDS.filter(function (g) {
+    if (g.items.length >= 3) return true;
+    RARE = RARE.concat(g.items);
+    return false;
+  }).sort(function (a, b) {
+    var x = PARTS.indexOf(a.w), y = PARTS.indexOf(b.w);
+    return (x === -1 ? 999 : x) - (y === -1 ? 999 : y) || b.items.length - a.items.length;
+  });
+  function inLevel(lv) { return ALL.filter(function (i) { return i.l === lv; }); }
+  // The full dictionary, one group for each first letter.
+  var LETTERS = [], letterMap = {};
+  ALL.slice().sort(byPv).forEach(function (it) {
+    var k = it.pv.charAt(0).toUpperCase();
+    if (!letterMap[k]) { letterMap[k] = { k: k, items: [] }; LETTERS.push(letterMap[k]); }
+    letterMap[k].items.push(it);
+  });
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function star() { var s = el("span", "star", "\u2605 "); s.setAttribute("aria-hidden", "true"); return s; }
+  function norm(s) { return s.toLowerCase().replace(/[\u2018\u2019]/g, "'"); }
+  function count(n) { return n === 1 ? "1 phrasal verb" : n + " phrasal verbs"; }
+
+  function entry(item) {
+    var li = el("li");
+    var id = "def-" + (++uid);
+    var btn = el("button", "entry-btn");
+    btn.type = "button";
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", id);
+    var mark = el("span", "mark", item.l === 1 ? "\u2605" : "");
+    mark.setAttribute("aria-hidden", "true");
+    var pv = el("span", "pv");
+    var sp = item.pv.indexOf(" ");
+    pv.appendChild(el("span", "base", item.pv.slice(0, sp)));
+    pv.appendChild(el("span", "part", item.pv.slice(sp)));
+    btn.appendChild(mark);
+    btn.appendChild(pv);
+    if (item.l === 1) { var sr = el("span", null, " (learn first)"); sr.style.cssText = "position:absolute;left:-9999px"; btn.appendChild(sr); }
+    btn.appendChild(el("span", "chev"));
+
+    var def = el("div", "def");
+    def.id = id;
+    def.hidden = true;
+    var many = item.s.length > 1;
+    item.s.forEach(function (sense, i) {
+      var block = el("div", many ? "sense numbered" : "sense");
+      if (many) block.appendChild(el("span", "num", String(i + 1)));
+      var body = el("div", "sense-body");
+      var m = el("p", "meaning");
+      m.appendChild(el("span", "label", "Meaning"));
+      var text = sense.m, lab = text.match(LABELS);
+      if (lab) { m.appendChild(el("span", "usage", lab[1] + " ")); text = text.slice(lab[0].length); }
+      m.appendChild(document.createTextNode(text));
+      var x = el("p", "example-wrap");
+      x.appendChild(el("span", "label", "Example"));
+      x.appendChild(el("span", "example", sense.ex));
+      body.appendChild(m);
+      body.appendChild(x);
+      block.appendChild(body);
+      def.appendChild(block);
+    });
+
+    btn.addEventListener("click", function () {
+      var open = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", open ? "false" : "true");
+      def.hidden = open;
+    });
+    li.appendChild(btn);
+    li.appendChild(def);
+    return li;
+  }
+
+  function entryList(items, flat) {
+    var ul = el("ul", flat ? "entries flat" : "entries");
+    items.forEach(function (it) { ul.appendChild(entry(it)); });
+    return ul;
+  }
+
+  // Inside a family or a topic: three groups, the ones to learn first on top.
+  function levelGroups(items, order) {
+    var frag = document.createDocumentFragment();
+    [1, 2, 3].forEach(function (lv) {
+      var group = items.filter(function (i) { return i.l === lv; }).sort(order || byFamily);
+      if (!group.length) return;
+      var h = el("p", "group-label");
+      if (lv === 1) h.appendChild(star());
+      h.appendChild(document.createTextNode(LEVELS[lv]));
+      frag.appendChild(h);
+      frag.appendChild(entryList(group));
+    });
+    return frag;
+  }
+
+  function byName(key) { return function (a, b) { return a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1; }; }
+  // What an open family, topic or little word shows: three groups, or one A to Z list.
+  function panelFor(items, order) {
+    var frag = document.createDocumentFragment();
+    frag.appendChild(el("p", "panel-note", count(items.length) + (state.az ? ", sorted A to Z" : ", sorted by importance")));
+    frag.appendChild(state.az ? entryList(items.slice().sort(byPv)) : levelGroups(items, order));
+    return frag;
+  }
+
+  // One tap-to-open row. Its panel is only built while it is open.
+  function accordion(key, title, sub, titleClass, subClass, buildPanel) {
+    var li = el("li", "fam");
+    var h2 = el("h2");
+    var btn = el("button", "fam-btn");
+    btn.type = "button";
+    var pid = "p-" + key;
+    var isOpen = state.open === key;
+    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    btn.setAttribute("aria-controls", pid);
+    btn.appendChild(el("span", titleClass, title));
+    btn.appendChild(el("span", subClass, sub));
+    btn.appendChild(el("span", "chev"));
+    h2.appendChild(btn);
+    var panel = el("div", "panel");
+    panel.id = pid;
+    panel.hidden = !isOpen;
+    if (isOpen) panel.appendChild(buildPanel());
+    btn.addEventListener("click", function () {
+      state.open = (state.open === key) ? null : key;
+      renderBrowse();
+      if (state.open) {
+        var b = document.querySelector('[aria-controls="' + pid + '"]');
+        var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (b && b.scrollIntoView) b.scrollIntoView({ block: "start", behavior: calm ? "auto" : "smooth" });
+      }
+    });
+    li.appendChild(h2);
+    li.appendChild(panel);
+    return li;
+  }
+
+  function go(view) {
+    state.view = view;
+    state.open = null;
+    state.az = false;
+    state.azq = false;
+    render();
+    window.scrollTo(0, 0);
+  }
+
+  // A front-page choice: one big button that opens a view.
+  function option(view, title, sub, withStar) {
+    var li = el("li", "fam opt");
+    var btn = el("button", "fam-btn");
+    btn.type = "button";
+    var name = el("span", "hw word");
+    if (withStar) name.appendChild(star());
+    name.appendChild(document.createTextNode(title));
+    btn.appendChild(name);
+    btn.appendChild(el("span", "opt-sub", sub));
+    btn.appendChild(el("span", "chev"));
+    btn.addEventListener("click", function () { go(view); });
+    li.appendChild(btn);
+    return li;
+  }
+
+  function renderHome() {
+    browse.appendChild(el("p", "section-label", "By importance"));
+    var ul = el("ul", "families");
+    ul.appendChild(option(1, LEVELS[1], String(inLevel(1).length), true));
+    ul.appendChild(option(2, LEVELS[2], String(inLevel(2).length), false));
+    ul.appendChild(option(3, LEVELS[3], String(inLevel(3).length), false));
+    browse.appendChild(ul);
+    browse.appendChild(el("p", "section-label", "By everyday use"));
+    ul = el("ul", "families");
+    ul.appendChild(option("topics", "Everyday uses", "home, travel, work"));
+    browse.appendChild(ul);
+    browse.appendChild(el("p", "section-label", "By verb"));
+    ul = el("ul", "families");
+    ul.appendChild(option("verb", "Verb families", "go, get, put, come"));
+    browse.appendChild(ul);
+    browse.appendChild(el("p", "section-label", "By little word"));
+    ul = el("ul", "families");
+    ul.appendChild(option("words", "Little words", "in, out, up, down"));
+    browse.appendChild(ul);
+    browse.appendChild(el("p", "section-label", "A to Z"));
+    ul = el("ul", "families");
+    ul.appendChild(option("az", "Full dictionary", "all " + ALL.length));
+    browse.appendChild(ul);
+    ul = el("ul", "families about-link");
+    var li = el("li", "fam opt");
+    var btn = el("button", "fam-btn");
+    btn.type = "button";
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><path d="M12 7.2v.1"/></svg>';
+    btn.appendChild(el("span", "info-title", "About this dictionary"));
+    btn.appendChild(el("span", "chev"));
+    btn.addEventListener("click", function () { go("about"); });
+    li.appendChild(btn);
+    ul.appendChild(li);
+    browse.appendChild(ul);
+  }
+
+  // The sort button names the order you get when you tap it: A to Z, or back to importance.
+  function sortButton(azNow) {
+    var b = el("button", "mini");
+    b.type = "button";
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v16M8 4 4.5 7.5M8 4l3.5 3.5M16 20V4M16 20l-3.5-3.5M16 20l3.5-3.5"/></svg>';
+    b.appendChild(el("span", null, azNow ? "Importance" : "A to Z"));
+    b.setAttribute("aria-label", azNow ? "Sort by importance" : "Sort A to Z");
+    return b;
+  }
+
+  function viewHead(title, withStar, sub, withAz) {
+    var head = el("div", "list-head");
+    var h = el("h2", "view-title");
+    if (withStar) h.appendChild(star());
+    h.appendChild(document.createTextNode(title));
+    head.appendChild(h);
+    if (withAz) {
+      var az = sortButton(state.az);
+      az.addEventListener("click", function () { state.az = !state.az; renderBrowse(); });
+      head.appendChild(az);
+    }
+    browse.appendChild(head);
+    browse.appendChild(el("p", "view-count", sub));
+  }
+
+  // One level as a list: verbs that share a base verb sit together, biggest families first.
+  function renderLevel(lv) {
+    var items = inLevel(lv).sort(byImportantFamily);
+    viewHead(LEVELS[lv], lv === 1, count(items.length) + ", sorted by verb family, "
+      + (state.az ? "A to Z" : "most important first") + ". Tap a verb to open it.", true);
+    var groups = [], singles = [], i = 0;
+    while (i < items.length) {
+      var j = i;
+      while (j < items.length && items[j].fam === items[i].fam) j++;
+      if (j - i >= 2) groups.push(items.slice(i, j)); else singles.push(items[i]);
+      i = j;
+    }
+    if (state.az) {
+      groups.sort(function (x, y) { return x[0].base < y[0].base ? -1 : 1; });
+      groups.forEach(function (g) { g.sort(byPv); });
+      singles.sort(byPv);
+    } else {
+      singles.sort(byPart);
+    }
+    var ul = el("ul", "families");
+    ul.style.marginTop = "12px";
+    groups.forEach(function (g) {
+      ul.appendChild(accordion("v" + lv + "-" + g[0].base.toLowerCase(), g[0].base, count(g.length), "hw", "count",
+        function () { return entryList(g); }));
+    });
+    if (singles.length) {
+      ul.appendChild(accordion("v" + lv + "-other", "Other verbs", count(singles.length), "hw word", "count",
+        function () { return entryList(singles); }));
+    }
+    browse.appendChild(ul);
+  }
+
+  function renderDictionary() {
+    viewHead("A to Z dictionary", false, count(ALL.length) + ", sorted A to Z. Tap a letter to open it.", false);
+    var ul = el("ul", "families");
+    ul.style.marginTop = "12px";
+    LETTERS.forEach(function (L) {
+      ul.appendChild(accordion("z-" + L.k.toLowerCase(), L.k, count(L.items.length), "hw", "count",
+        function () { return entryList(L.items); }));
+    });
+    browse.appendChild(ul);
+  }
+
+  function renderTopics() {
+    viewHead("Everyday uses", false, "Tap a topic to see its phrasal verbs.", true);
+    var ul = el("ul", "families");
+    ul.style.marginTop = "12px";
+    var list = TOPICS.map(function (tp, n) { return { n: tp.n, i: n }; });
+    if (state.az) list.sort(byName("n"));
+    list.forEach(function (tp) {
+      var items = ALL.filter(function (it) { return it.t.indexOf(tp.i) !== -1; });
+      ul.appendChild(accordion("t" + tp.i, tp.n, String(items.length), "hw word", "count",
+        function () { return panelFor(items); }));
+    });
+    browse.appendChild(ul);
+  }
+
+  function renderFamilies() {
+    viewHead("Verb families", false, state.az ? "The verb families, A to Z." : "The verbs with the most phrasal verbs come first.", true);
+    var ul = el("ul", "families");
+    ul.style.marginTop = "12px";
+    (state.az ? BIG.slice().sort(byName("v")) : BIG).forEach(function (fam) {
+      ul.appendChild(accordion("f-" + fam.v.toLowerCase(), fam.v, count(fam.items.length), "hw", "count",
+        function () { return panelFor(fam.items); }));
+    });
+    ul.appendChild(accordion("other", "Other verbs", count(OTHER.length), "hw word", "count",
+      function () { return panelFor(OTHER, byPart); }));
+    browse.appendChild(ul);
+  }
+
+  function renderWords() {
+    viewHead("Little words", false, "Tap a little word to see its phrasal verbs.", true);
+    var ul = el("ul", "families");
+    ul.style.marginTop = "12px";
+    (state.az ? WORDS.slice().sort(byName("w")) : WORDS).forEach(function (g) {
+      ul.appendChild(accordion("w-" + g.w, g.w, count(g.items.length), "hw", "count",
+        function () { return panelFor(g.items); }));
+    });
+    if (RARE.length) {
+      ul.appendChild(accordion("w-other", "Other little words", count(RARE.length), "hw word", "count",
+        function () { return panelFor(RARE, byPart); }));
+    }
+    browse.appendChild(ul);
+  }
+
+  function renderBrowse() {
+    browse.textContent = "";
+    if (state.view === "about") return;
+    if (state.view === "home") renderHome();
+    else if (state.view === "words") renderWords();
+    else if (state.view === "az") renderDictionary();
+    else if (state.view === "topics") renderTopics();
+    else if (state.view === "verb") renderFamilies();
+    else renderLevel(state.view);
+  }
+
+  function renderResults() {
+    var q = norm(state.q.trim());
+    results.textContent = "";
+    var first = [], second = [];
+    ALL.forEach(function (it) {
+      if (norm(it.pv).indexOf(q) !== -1) first.push(it);
+      else if (it.s.some(function (s) { return norm(s.m).indexOf(q) !== -1; })) second.push(it);
+    });
+    function byLevel(a, b) { return a.l - b.l || byFamily(a, b); }
+    var hits = first.sort(byLevel).concat(second.sort(byLevel));
+    if (state.azq) hits.sort(byPv);
+    if (!hits.length) {
+      results.appendChild(el("p", "empty", "No phrasal verb matches \u201c" + state.q.trim() + "\u201d. Try a verb, like get or slow, or a meaning, like delay."));
+      return;
+    }
+    var head = el("div", "list-head");
+    var n = el("p", "results-count", count(hits.length) + (hits.length < 2 ? "" : state.azq ? ", sorted A to Z" : ", sorted by importance"));
+    n.style.cssText = "margin:0;flex:1 1 auto";
+    head.appendChild(n);
+    if (hits.length > 5) {
+      var az = sortButton(state.azq);
+      az.addEventListener("click", function () { state.azq = !state.azq; renderResults(); });
+      head.appendChild(az);
+    }
+    head.style.margin = "0 2px 8px";
+    results.appendChild(head);
+    results.appendChild(entryList(hits, true));
+  }
+
+  function render() {
+    var searching = state.q.trim() !== "";
+    var home = state.view === "home";
+    top.hidden = !home;
+    homeBtn.hidden = home;
+    var aboutOn = state.view === "about" && !searching;
+    browse.hidden = searching || aboutOn;
+    about.hidden = !aboutOn;
+    results.hidden = !searching;
+    if (searching) renderResults(); else renderBrowse();
+  }
+
+  var q = document.getElementById("q");
+  q.addEventListener("input", function (e) { state.q = e.target.value; render(); });
+  homeBtn.addEventListener("click", function () { q.value = ""; state.q = ""; go("home"); });
+
+  document.getElementById("foot").textContent = ALL.length + " phrasal verbs on " + DATA.length + " base verbs, written for B1 and B2 learners.";
+  // The About page: numbers and lists come from the data, so they cannot go out of date.
+  var byImp = RANKED.slice().sort(function (x, y) { return y.top - x.top || y.items.length - x.items.length || x.idx - y.idx; });
+  var FILL = {
+    all: ALL.length, l1: inLevel(1).length, l2: inLevel(2).length, l3: inLevel(3).length,
+    topics: TOPICS.length, big: BIG.length,
+    imp: byImp.slice(0, 5).map(function (f) { return f.v; }).join(", "),
+    sizes: RANKED.slice(0, 5).map(function (f) { return f.v + " " + f.items.length; }).join(", ")
+  };
+  Array.prototype.forEach.call(about.querySelectorAll("[data-n]"), function (n) { n.textContent = FILL[n.getAttribute("data-n")]; });
+  var tl = document.getElementById("about-topics");
+  TOPICS.forEach(function (tp) { tl.appendChild(el("li", null, tp.n)); });
+  render();
+})();
+</script>
+</body>
+</html>
