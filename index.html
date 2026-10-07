@@ -49,6 +49,9 @@ body {
 h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; line-height: 1.15; margin: 0; text-wrap: balance; }
 .how { margin: 8px 0 0; color: var(--muted); }
 .how .star { color: var(--star); }
+.key { list-style: none; margin: 8px 2px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 16px; color: var(--muted); }
+.key li { white-space: nowrap; }
+.key .star { color: var(--star); font-size: 0.85rem; }
 
 .bar {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
@@ -107,14 +110,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   display: flex; align-items: center; gap: 8px;
   font: inherit; color: var(--ink); background: transparent; border: 0; text-align: left; cursor: pointer;
 }
-.entry-btn .mark { flex: 0 0 1.1em; color: var(--star); text-align: center; }
+.entry-btn .mark { flex: 0 0 2.8rem; font-size: 0.85rem; color: var(--star); text-align: left; white-space: nowrap; }
 .pv { font-size: 1.12rem; min-width: 0; }
 .pv .base { color: var(--muted); }
 .pv .part { font-weight: 700; }
 .entry-btn .chev { margin-left: auto; width: 9px; height: 9px; border-width: 2px; }
 .entry-btn[aria-expanded="true"] { background: var(--hi); }
 .entry-btn[aria-expanded="true"] .mark, .entry-btn[aria-expanded="true"] .base { color: var(--ink); }
-.def { padding: 10px 14px 14px calc(14px + 1.1em + 8px); display: flex; flex-direction: column; gap: 14px; }
+.def { padding: 10px 14px 14px calc(14px + 2.8rem + 8px); display: flex; flex-direction: column; gap: 14px; }
 .sense-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .sense.numbered { display: flex; gap: 10px; align-items: flex-start; }
 .sense.numbered + .sense.numbered { border-top: 1px solid var(--line); padding-top: 14px; }
@@ -236,6 +239,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   <header id="top">
     <h1>Dictionary of Phrasal Verbs</h1>
     <p class="how">Search for a verb or a meaning, or choose how to see the verbs.</p>
+    <div id="home-key"></div>
   </header>
 
   <div class="bar" role="search">
@@ -259,6 +263,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     <div class="about-card">
       <h4><span class="star" aria-hidden="true">&#9733; </span>Learn these first <small>(<span data-n="l1"></span> verbs)</small></h4>
       <p><span class="label">What it means</span>The phrasal verbs a B1 to B2 learner needs most in everyday life. Judgement.</p>
+      <p><span class="label">Stars</span>Every verb in this group has stars. &#9733;&#9733;&#9733; marks the first <span data-n="s3"></span> to learn, &#9733;&#9733; the next <span data-n="s2"></span> and &#9733; the next <span data-n="s1"></span>. Judgement. The number of stars does not change the order on any screen.</p>
       <p><span class="label">Order on its screen</span>By verb family. Families with the most &#9733; verbs come first: <span data-n="imp"></span>.</p>
     </div>
     <div class="about-card">
@@ -320,6 +325,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
       <li>Which phrasal verbs are in the dictionary, apart from the 11 verb families taken from Kov&#225;cs.</li>
       <li>The meanings and the example sentences. Claude wrote them. They have not been checked against a published dictionary.</li>
       <li>The three groups: Learn these first, Other useful verbs and More verbs.</li>
+      <li>The number of stars on each Learn these first verb.</li>
       <li>The <span data-n="topics"></span> everyday topics, and which verbs are in each topic.</li>
       <li>The order of the little words.</li>
     </ul>
@@ -336,6 +342,11 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   var TOPICS = [{"n":"Daily routine","h":"wake up, set off, stay in"},{"n":"Home and housework","h":"tidy up, switch on, lock up"},{"n":"Food and drink","h":"eat out, heat up, run out"},{"n":"Clothes, shopping and money","h":"try on, take back, save up"},{"n":"Travel and getting around","h":"get on, set off, slow down"},{"n":"Phone and computer","h":"call back, log in, plug in"},{"n":"Forms, offices and appointments","h":"fill in, sign in, put off"},{"n":"School and study","h":"hand in, look up, catch up"},{"n":"Work","h":"take on, carry out, deal with"},{"n":"Health and body","h":"look after, get over, lie down"},{"n":"Family, friends and feelings","h":"get on, fall out, cheer up"},{"n":"Talking and ideas","h":"speak up, point out, find out"},{"n":"Moving and places","h":"come in, sit down, turn around"},{"n":"Things that happen and change","h":"go on, end up, turn out"}];
   var LABELS = /^\(((?:British|American|formal|informal|old|rude)(?:, (?:British|American|formal|informal|old|rude))*)\)\s+/;
   var LEVELS = [null, "Learn these first", "Other useful verbs", "More verbs"];
+  // Stars on the "Learn these first" verbs. Three stars: the first 50 to learn. Two stars: the next 50.
+  // Every other "Learn these first" verb has one star. To move a verb, move its name between the lists.
+  var THREE_STAR = ["wake up", "get up", "go out", "come in", "come back", "go back", "get back", "sit down", "stand up", "put on", "take off", "try on", "turn on", "turn off", "turn up", "turn down", "get on", "get off", "get in", "get out", "pick up", "look for", "look at", "look after", "look up", "look forward to", "look like", "find out", "fill in", "write down", "hand in", "log in", "call back", "hold on", "come on", "go on", "carry on", "give up", "take back", "throw away", "put away", "run out", "break down", "grow up", "slow down", "calm down", "watch out", "ask for", "deal with", "sort out"];
+  var TWO_STAR = ["put back", "put down", "put off", "go away", "go in", "go up", "go down", "go off", "go ahead", "come out", "come up", "come over", "get over", "get together", "get along", "take away", "take out", "bring back", "bring up", "turn around", "turn out", "look out", "look around", "fall down", "fall over", "break up", "check in", "check out", "clean up", "drop off", "eat out", "end up", "feel like", "fill up", "give back", "hang up", "hurry up", "lie down", "log out", "move in", "move out", "pay back", "plug in", "set up", "set off", "sign up", "switch on", "switch off", "tidy up", "work out"];
+  var STARS = [0, 0, 0, 0];
   // The small words, in the order used inside each verb: opposites sit next to each other.
   var PARTS = ["in", "out", "up", "down", "on", "off", "back", "away", "over", "around", "round", "through",
                "along", "about", "ahead", "forward", "together", "apart", "aside", "across", "after",
@@ -366,6 +377,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
       it.part = (p === -1 ? PARTS.length : p) * 100 + words.length * 10;
       it.seq = j;
       it.word = words[1];
+      it.st = it.l !== 1 ? 0 : THREE_STAR.indexOf(it.pv) !== -1 ? 3 : TWO_STAR.indexOf(it.pv) !== -1 ? 2 : 1;
       ALL.push(it);
     });
   });
@@ -378,6 +390,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   function byPart(a, b) { return a.part - b.part || a.fam - b.fam || a.seq - b.seq; }
   function byPv(a, b) { return a.pv < b.pv ? -1 : a.pv > b.pv ? 1 : 0; }
   ALL.sort(byFamily);
+  ALL.forEach(function (it) { STARS[it.st]++; });
   var BIG = RANKED.filter(function (f) { return f.items.length >= 4; });
   var OTHER = ALL.filter(function (it) { return RANKED[it.fam].items.length < 4; });
   // The little words, in the PARTS order. Words with only one or two verbs share a last group.
@@ -411,6 +424,19 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   }
   function star() { var s = el("span", "star", "\u2605 "); s.setAttribute("aria-hidden", "true"); return s; }
   function norm(s) { return s.toLowerCase().replace(/[\u2018\u2019]/g, "'"); }
+  // The key: what one, two and three stars mean.
+  function starKey() {
+    var ul = el("ul", "key");
+    [[3, "three stars", "the first " + STARS[3]], [2, "two stars", "the next " + STARS[2]], [1, "one star", "the next " + STARS[1]]].forEach(function (k) {
+      var li = el("li");
+      var s = el("span", "star", "\u2605\u2605\u2605".slice(0, k[0])); s.setAttribute("aria-hidden", "true");
+      li.appendChild(s);
+      li.appendChild(el("span", "sr", k[1] + ":"));
+      li.appendChild(document.createTextNode(" " + k[2]));
+      ul.appendChild(li);
+    });
+    return ul;
+  }
   function count(n) { return n === 1 ? "1 phrasal verb" : n + " phrasal verbs"; }
 
   function entry(item) {
@@ -420,7 +446,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     btn.type = "button";
     btn.setAttribute("aria-expanded", "false");
     btn.setAttribute("aria-controls", id);
-    var mark = el("span", "mark", item.l === 1 ? "\u2605" : "");
+    var mark = el("span", "mark", "\u2605\u2605\u2605".slice(0, item.st));
     mark.setAttribute("aria-hidden", "true");
     var pv = el("span", "pv");
     var sp = item.pv.indexOf(" ");
@@ -428,7 +454,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     pv.appendChild(el("span", "part", item.pv.slice(sp)));
     btn.appendChild(mark);
     btn.appendChild(pv);
-    if (item.l === 1) { var sr = el("span", null, " (learn first)"); sr.style.cssText = "position:absolute;left:-9999px"; btn.appendChild(sr); }
+    if (item.l === 1) { var sr = el("span", null, [null, " (one star)", " (two stars)", " (three stars)"][item.st]); sr.style.cssText = "position:absolute;left:-9999px"; btn.appendChild(sr); }
     btn.appendChild(el("span", "chev"));
 
     var def = el("div", "def");
@@ -623,6 +649,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     var items = inLevel(lv).sort(byImportantFamily);
     viewHead(LEVELS[lv], lv === 1, count(items.length) + ", sorted by verb family, "
       + (state.az ? "A to Z" : "most important first") + ". Tap a verb to open it.", true);
+    if (lv === 1) browse.appendChild(starKey());
     var groups = [], singles = [], i = 0;
     while (i < items.length) {
       var j = i;
@@ -928,11 +955,12 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   var byImp = RANKED.slice().sort(function (x, y) { return y.top - x.top || y.items.length - x.items.length || x.idx - y.idx; });
   var FILL = {
     all: ALL.length, l1: inLevel(1).length, l2: inLevel(2).length, l3: inLevel(3).length,
-    topics: TOPICS.length, big: BIG.length,
+    topics: TOPICS.length, big: BIG.length, s3: STARS[3], s2: STARS[2], s1: STARS[1],
     imp: byImp.slice(0, 5).map(function (f) { return f.v; }).join(", "),
     sizes: RANKED.slice(0, 5).map(function (f) { return f.v + " " + f.items.length; }).join(", ")
   };
   Array.prototype.forEach.call(about.querySelectorAll("[data-n]"), function (n) { n.textContent = FILL[n.getAttribute("data-n")]; });
+  document.getElementById("home-key").appendChild(starKey());
   var tl = document.getElementById("about-topics");
   TOPICS.forEach(function (tp) { tl.appendChild(el("li", null, tp.n)); });
   // MODE "app" is the whole dictionary. MODE "quiz" is the quiz on its own: no search bar, no Back.
