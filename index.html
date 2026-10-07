@@ -1,9 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="A phone-friendly dictionary of English phrasal verbs for B1 and B2 learners.">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Dictionary of Phrasal Verbs</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Zilla+Slab:wght@600;700&display=swap">
 <style>
@@ -18,6 +13,8 @@
   --accent: #1d55b8;
   --hi: #ffe680;
   --star: #a87700;
+  --good: #1f7a3d; --good-bg: #e2f3e7;
+  --bad: #b3261e; --bad-bg: #fbe8e6;
   --font-display: "Zilla Slab", Rockwell, "Roboto Slab", Georgia, serif;
   --font-body: "Atkinson Hyperlegible", Verdana, "Segoe UI", Roboto, Arial, sans-serif;
   --gutter: 16px;
@@ -26,12 +23,14 @@
   :root:not([data-theme="light"]) {
     --bg: #0e1522; --surface: #172132; --ink: #e9eef7; --muted: #a0adc2;
     --line: #2b3852; --accent: #8ab6ff; --hi: #4d4213; --star: #f0c64a;
+    --good: #7dd69a; --good-bg: #153223; --bad: #ff9a91; --bad-bg: #3a1b19;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0e1522; --surface: #172132; --ink: #e9eef7; --muted: #a0adc2;
   --line: #2b3852; --accent: #8ab6ff; --hi: #4d4213; --star: #f0c64a;
+  --good: #7dd69a; --good-bg: #153223; --bad: #ff9a91; --bad-bg: #3a1b19;
   color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: border-box; }
@@ -168,6 +167,48 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .results .entries { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 .empty { margin: 18px 2px; }
 .foot { margin: 28px 2px 0; color: var(--muted); font-size: 0.85rem; }
+/* Quiz: one phrasal verb, four meanings to choose from. */
+.quiz-score { flex: 0 0 auto; padding: 6px 12px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; font-weight: 700; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.quiz-card { margin-top: 14px; padding: 16px 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.quiz-ask { margin: 0; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.quiz-verb { margin: 6px 0 0; font-family: var(--font-display); font-weight: 700; font-size: 2rem; line-height: 1.15; }
+.quiz-verb .base { color: var(--muted); }
+.quiz-msg { margin: 8px 0 0; }
+.quiz-opts { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  width: 100%; min-height: 56px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  font: inherit; text-align: left; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer;
+}
+.quiz-opt:disabled { color: var(--ink); opacity: 1; cursor: default; }
+.quiz-text { flex: 1 1 auto; min-width: 0; }
+.quiz-mark { flex: 0 0 1.4em; text-align: center; font-weight: 700; font-size: 1.15rem; }
+.quiz-opt.is-right { background: var(--good-bg); border-color: var(--good); }
+.quiz-opt.is-right .quiz-mark { color: var(--good); }
+.quiz-opt.is-wrong { background: var(--bad-bg); border-color: var(--bad); }
+.quiz-opt.is-wrong .quiz-mark { color: var(--bad); }
+.quiz-opt.is-dim { opacity: 0.55; }
+.quiz-fb { margin-top: 12px; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--good); background: var(--good-bg); }
+.quiz-fb.bad { border-color: var(--bad); background: var(--bad-bg); }
+.quiz-fb p { margin: 0; }
+.quiz-fb p + p { margin-top: 6px; }
+.quiz-verdict { font-weight: 700; }
+.quiz-fb .label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.quiz-fb .example { font-style: italic; }
+.quiz-next {
+  width: 100%; min-height: 54px; margin-top: 12px;
+  font: inherit; font-weight: 700; font-size: 1.05rem; color: var(--surface); background: var(--accent);
+  border: 0; border-radius: 12px; cursor: pointer;
+}
+.quiz-level-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.quiz-level-desc { color: var(--muted); font-size: 0.95rem; }
+.quiz-quiet {
+  width: 100%; min-height: 48px; margin-top: 8px;
+  font: inherit; font-weight: 700; color: var(--ink); background: transparent;
+  border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer;
+}
+.sr { position: absolute; left: -9999px; }
 .about-link { margin-top: 28px; }
 .about-link svg { flex: 0 0 auto; width: 26px; height: 26px; color: var(--accent); }
 .about-link .info-title { font-weight: 700; font-size: 1.05rem; flex: 1 1 auto; min-width: 0; }
@@ -190,8 +231,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .about a { color: var(--accent); font-weight: 700; text-underline-offset: 3px; }
 .about a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 </style>
-</head>
-<body>
+
 <div class="wrap">
   <header id="top">
     <h1>Dictionary of Phrasal Verbs</h1>
@@ -214,7 +254,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     <p class="made">This was made by David Carr with the assistance of Claude Coworker on 7 October 2026.</p>
 
     <h3>What the front-page buttons mean</h3>
-    <p>The front page has seven buttons for the verbs. Each one shows the same <span data-n="all"></span> phrasal verbs, sorted in a different way.</p>
+    <p>The front page has seven buttons for the verbs. Each one shows the same <span data-n="all"></span> phrasal verbs, sorted in a different way. One more button, after Everyday uses, is a test.</p>
 
     <div class="about-card">
       <h4><span class="star" aria-hidden="true">&#9733; </span>Learn these first <small>(<span data-n="l1"></span> verbs)</small></h4>
@@ -235,6 +275,11 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
       <h4>Everyday uses</h4>
       <p><span class="label">What it means</span>The verbs under <span data-n="topics"></span> topics from daily life. A verb can be in more than one topic. The topics, and which verb goes in which topic, are judgement.</p>
       <p><span class="label">Order on its screen</span>Topics run from Daily routine to Things that happen and change. Inside a topic, &#9733; verbs come first, then the other two groups.</p>
+    </div>
+    <div class="about-card">
+      <h4>Test what you know</h4>
+      <p><span class="label">What it means</span>A test of 10 questions. You see a phrasal verb and choose its meaning from four.</p>
+      <p><span class="label">Levels</span>Easy uses the Learn these first verbs. Medium uses the Other useful verbs. Difficult uses the More verbs.</p>
     </div>
     <div class="about-card">
       <h4>Verb families</h4>
@@ -481,6 +526,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   }
 
   function go(view) {
+    if (view === "quiz") { if (QUIZ_PICK) state.quiz = null; else startQuiz(1); }
     state.view = view;
     state.open = null;
     state.az = false;
@@ -506,25 +552,31 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   }
 
   function renderHome() {
-    browse.appendChild(el("p", "section-label", "By importance"));
+    browse.appendChild(el("p", "section-label", "View by importance"));
     var ul = el("ul", "families");
     ul.appendChild(option(1, LEVELS[1], String(inLevel(1).length), true));
     ul.appendChild(option(2, LEVELS[2], String(inLevel(2).length), false));
     ul.appendChild(option(3, LEVELS[3], String(inLevel(3).length), false));
     browse.appendChild(ul);
-    browse.appendChild(el("p", "section-label", "By everyday use"));
+    browse.appendChild(el("p", "section-label", "View by everyday use"));
     ul = el("ul", "families");
     ul.appendChild(option("topics", "Everyday uses", "home, travel, work"));
     browse.appendChild(ul);
-    browse.appendChild(el("p", "section-label", "By verb"));
+    if (HOME_TEST) {
+      browse.appendChild(el("p", "section-label", "Practice"));
+      ul = el("ul", "families");
+      ul.appendChild(option("quiz", "Test what you know", "3 levels"));
+      browse.appendChild(ul);
+    }
+    browse.appendChild(el("p", "section-label", "View by verb"));
     ul = el("ul", "families");
     ul.appendChild(option("verb", "Verb families", "go, get, put, come"));
     browse.appendChild(ul);
-    browse.appendChild(el("p", "section-label", "By little word"));
+    browse.appendChild(el("p", "section-label", "View by little word"));
     ul = el("ul", "families");
     ul.appendChild(option("words", "Little words", "in, out, up, down"));
     browse.appendChild(ul);
-    browse.appendChild(el("p", "section-label", "A to Z"));
+    browse.appendChild(el("p", "section-label", "View A to Z"));
     ul = el("ul", "families");
     ul.appendChild(option("az", "Full dictionary", "all " + ALL.length));
     browse.appendChild(ul);
@@ -651,6 +703,169 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     browse.appendChild(ul);
   }
 
+  // ---------- Quiz: match a phrasal verb with its meaning, four choices ----------
+  var QUIZ_LEN = 10;
+  var STOP = { something: 1, someone: 1, "with": 1, from: 1, that: 1, your: 1, into: 1, make: 1, place: 1, have: 1, more: 1, time: 1, other: 1, about: 1 };
+  function plain(m) { return m.replace(LABELS, ""); }
+  function keyWords(m) {
+    return norm(m).replace(/[^a-z ]/g, " ").split(/\s+/).filter(function (w) { return w.length >= 4 && !STOP[w]; });
+  }
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  // Questions come from the "learn these first" verbs. Skip meanings written as a formula ("x = y").
+  function quizPool(level) {
+    return inLevel(level || 1).filter(function (it) { return !/[=\u201c\u201d"]|same as/.test(it.s[0].m); });
+  }
+  // Easy, medium and difficult are the dictionary's three groups.
+  var QLEVELS = [null,
+    { n: "Easy", d: "The verbs you need most." },
+    { n: "Medium", d: "Common verbs to learn next." },
+    { n: "Difficult", d: "Verbs you meet less often." }];
+  // Wrong answers are meanings of other verbs. Leave out any that could also be right, and prefer
+  // ones that share no key word with the right answer, so there is only one sensible choice.
+  function makeQuestion(item, pool) {
+    var right = plain(item.s[0].m);
+    var own = item.s.map(function (s) { return norm(plain(s.m)); });
+    var words = keyWords(right);
+    var seen = {}; seen[norm(right)] = 1;
+    var strict = [], loose = [];
+    shuffle(pool.slice()).forEach(function (o) {
+      if (o === item) return;
+      var m = plain(o.s[0].m), k = norm(m);
+      if (seen[k]) return;
+      if (o.s.some(function (s) { return own.indexOf(norm(plain(s.m))) !== -1; })) return;
+      seen[k] = 1;
+      var clash = keyWords(m).some(function (w) { return words.indexOf(w) !== -1; });
+      (clash ? loose : strict).push(m);
+    });
+    var wrong = strict.slice(0, 3);
+    while (wrong.length < 3 && loose.length) wrong.push(loose.shift());
+    return { item: item, right: right, options: shuffle([right].concat(wrong)), picked: null };
+  }
+  function startQuiz(level) {
+    var pool = quizPool(level);
+    state.quiz = { level: level || 1, i: 0, qs: shuffle(pool.slice()).slice(0, QUIZ_LEN).map(function (it) { return makeQuestion(it, pool); }) };
+  }
+  function quizTitle() { return MODE === "quiz" ? "Phrasal Verbs Quiz" : "Test what you know"; }
+  function quietButton(text, onTap) {
+    var b = el("button", "quiz-quiet", text);
+    b.type = "button";
+    b.addEventListener("click", onTap);
+    return b;
+  }
+  function chooseLevel() { state.quiz = null; renderBrowse(); window.scrollTo(0, 0); }
+  // The first screen when the quiz offers levels: three big choices.
+  function renderQuizLevels() {
+    var head = el("div", "list-head");
+    head.appendChild(el("h2", "view-title", quizTitle()));
+    browse.appendChild(head);
+    browse.appendChild(el("p", "view-count", "Choose a level. Each " + (MODE === "quiz" ? "quiz" : "test") + " has " + QUIZ_LEN + " questions."));
+    var ul = el("ul", "families");
+    ul.style.marginTop = "12px";
+    [1, 2, 3].forEach(function (lv) {
+      var li = el("li", "fam opt"), b = el("button", "fam-btn"), text = el("span", "quiz-level-text");
+      b.type = "button";
+      text.appendChild(el("span", "hw word", QLEVELS[lv].n));
+      text.appendChild(el("span", "quiz-level-desc", QLEVELS[lv].d));
+      b.appendChild(text);
+      b.appendChild(el("span", "chev"));
+      b.addEventListener("click", function () { startQuiz(lv); renderBrowse(); window.scrollTo(0, 0); });
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    browse.appendChild(ul);
+  }
+  function quizVerb(item, cls) {
+    var p = el("p", cls), sp = item.pv.indexOf(" ");
+    p.appendChild(el("span", "base", item.pv.slice(0, sp)));
+    p.appendChild(el("span", "part", item.pv.slice(sp)));
+    return p;
+  }
+  function renderQuiz() {
+    if (!state.quiz) {
+      if (QUIZ_PICK) { renderQuizLevels(); return; }
+      startQuiz(1);
+    }
+    var z = state.quiz;
+    var score = z.qs.filter(function (q) { return q.picked === q.right; }).length;
+    var head = el("div", "list-head");
+    head.appendChild(el("h2", "view-title", quizTitle()));
+    if (z.i < z.qs.length) head.appendChild(el("span", "quiz-score", "Score " + score));
+    browse.appendChild(head);
+
+    if (z.i >= z.qs.length) {
+      var end = el("div", "quiz-card");
+      end.appendChild(el("p", "quiz-ask", "Your score"));
+      end.appendChild(el("p", "quiz-verb", score + " out of " + z.qs.length));
+      end.appendChild(el("p", "quiz-msg", score === z.qs.length ? "All correct. Well done!"
+        : score >= 7 ? "Good work." : "Keep going. Look at the verbs below, then try again."));
+      browse.appendChild(end);
+      var missed = z.qs.filter(function (q) { return q.picked !== q.right; }).map(function (q) { return q.item; });
+      if (missed.length) {
+        browse.appendChild(el("p", "section-label", "Look at these again"));
+        browse.appendChild(entryList(missed, true));
+      }
+      var again = el("button", "quiz-next", "Try again");
+      again.type = "button";
+      again.addEventListener("click", function () { startQuiz(z.level); renderBrowse(); window.scrollTo(0, 0); });
+      browse.appendChild(again);
+      if (QUIZ_PICK) browse.appendChild(quietButton("Change level", chooseLevel));
+      return;
+    }
+
+    var q = z.qs[z.i], done = q.picked !== null;
+    browse.appendChild(el("p", "view-count", (QUIZ_PICK ? QLEVELS[z.level].n + " \u00b7 " : "") + "Question " + (z.i + 1) + " of " + z.qs.length));
+    var card = el("div", "quiz-card");
+    card.appendChild(el("p", "quiz-ask", "What does this mean?"));
+    card.appendChild(quizVerb(q.item, "quiz-verb"));
+    browse.appendChild(card);
+
+    var ul = el("ul", "quiz-opts");
+    q.options.forEach(function (opt) {
+      var li = el("li"), b = el("button", "quiz-opt"), mark = el("span", "quiz-mark");
+      b.type = "button";
+      mark.setAttribute("aria-hidden", "true");
+      b.appendChild(el("span", "quiz-text", opt));
+      if (done) {
+        b.disabled = true;
+        if (opt === q.right) { b.className += " is-right"; mark.textContent = "\u2713"; b.appendChild(el("span", "sr", " (the right answer)")); }
+        else if (opt === q.picked) { b.className += " is-wrong"; mark.textContent = "\u2717"; b.appendChild(el("span", "sr", " (your answer)")); }
+        else b.className += " is-dim";
+      } else {
+        b.addEventListener("click", function () {
+          q.picked = opt;
+          renderBrowse();
+          var n = document.getElementById("quiz-next");
+          if (n && n.scrollIntoView) n.scrollIntoView({ block: "nearest" });
+        });
+      }
+      b.appendChild(mark);
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    browse.appendChild(ul);
+
+    if (done) {
+      var ok = q.picked === q.right;
+      var fb = el("div", ok ? "quiz-fb" : "quiz-fb bad");
+      fb.setAttribute("role", "status");
+      fb.appendChild(el("p", "quiz-verdict", ok ? "Correct!" : "Not quite. The right answer is marked \u2713."));
+      var ex = el("p");
+      ex.appendChild(el("span", "label", "Example"));
+      ex.appendChild(el("span", "example", q.item.s[0].ex));
+      fb.appendChild(ex);
+      browse.appendChild(fb);
+      var next = el("button", "quiz-next", z.i + 1 < z.qs.length ? "Next question" : "See your score");
+      next.type = "button";
+      next.id = "quiz-next";
+      next.addEventListener("click", function () { z.i++; renderBrowse(); window.scrollTo(0, 0); });
+      browse.appendChild(next);
+    }
+    if (QUIZ_PICK) browse.appendChild(quietButton("Change level", chooseLevel));
+  }
+
   function renderBrowse() {
     browse.textContent = "";
     if (state.view === "about") return;
@@ -659,6 +874,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     else if (state.view === "az") renderDictionary();
     else if (state.view === "topics") renderTopics();
     else if (state.view === "verb") renderFamilies();
+    else if (state.view === "quiz") renderQuiz();
     else renderLevel(state.view);
   }
 
@@ -719,8 +935,22 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   Array.prototype.forEach.call(about.querySelectorAll("[data-n]"), function (n) { n.textContent = FILL[n.getAttribute("data-n")]; });
   var tl = document.getElementById("about-topics");
   TOPICS.forEach(function (tp) { tl.appendChild(el("li", null, tp.n)); });
+  // MODE "app" is the whole dictionary. MODE "quiz" is the quiz on its own: no search bar, no Back.
+  var MODE = "app";
+  // QUIZ_PICK true: the quiz opens on a choice of easy, medium or difficult.
+  var QUIZ_PICK = true;
+  // HOME_TEST true: the home screen has a "Test what you know" button.
+  var HOME_TEST = true;
+  var START = (MODE === "quiz" || window.location.hash === "#quiz") ? "quiz" : "home";
+  if (MODE === "quiz") {
+    document.querySelector(".bar").hidden = true;
+    document.getElementById("foot").textContent = QUIZ_PICK
+      ? "Questions come from the " + ALL.length + " verbs in the Dictionary of Phrasal Verbs."
+      : "Questions come from the " + quizPool(1).length + " \u201clearn these first\u201d verbs in the Dictionary of Phrasal Verbs.";
+  }
+  if (START === "quiz") { if (QUIZ_PICK) state.quiz = null; else startQuiz(1); state.view = "quiz"; }
   render();
 })();
 </script>
-</body>
-</html>
+
+</body></html>
