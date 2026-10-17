@@ -327,14 +327,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
       <p><span class="label">Order on its screen</span>The same as above.</p>
     </div>
     <div class="about-card">
-      <h4>Verb families</h4>
-      <p><span class="label">What it means</span>The verbs grouped by their first verb, such as all the GET verbs together. There are <span data-n="big"></span> families with four or more verbs. The rest are under Other verbs.</p>
-      <p><span class="label">Order on its screen</span>By the number of phrasal verbs in each family in this app: <span data-n="sizes"></span>. This is a count. Inside a family, &#9733; verbs come first.</p>
-    </div>
-    <div class="about-card">
       <h4><span class="quiz-tag">QUIZ:</span> Test what you know</h4>
       <p><span class="label">What it means</span>A test of 10 questions. You see a phrasal verb and choose its meaning from four.</p>
       <p><span class="label">Levels</span>Easy uses the Learn these first verbs. Medium uses the Other useful verbs. Difficult uses the More verbs.</p>
+    </div>
+    <div class="about-card">
+      <h4>Verb families</h4>
+      <p><span class="label">What it means</span>The verbs grouped by their first verb, such as all the GET verbs together. There are <span data-n="big"></span> families with four or more verbs. The rest are under Other verbs.</p>
+      <p><span class="label">Order on its screen</span>By the number of phrasal verbs in each family in this app: <span data-n="sizes"></span>. This is a count. Inside a family, &#9733; verbs come first.</p>
     </div>
     <div class="about-card">
       <h4>Everyday uses</h4>
@@ -878,10 +878,6 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     ul.appendChild(option(2, LEVELS[2], String(inLevel(2).length), false));
     ul.appendChild(option(3, LEVELS[3], String(inLevel(3).length), false));
     browse.appendChild(ul);
-    browse.appendChild(el("p", "section-label", "View by verb"));
-    ul = el("ul", "families");
-    ul.appendChild(option("verb", "Verb families", "go, get, put, come"));
-    browse.appendChild(ul);
     if (HOME_TEST) {
       browse.appendChild(el("p", "section-label", "Practice"));
       ul = el("ul", "families");
@@ -891,6 +887,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
       ul.appendChild(quizOpt);
       browse.appendChild(ul);
     }
+    browse.appendChild(el("p", "section-label", "View by verb"));
+    ul = el("ul", "families");
+    ul.appendChild(option("verb", "Verb families", "go, get, put, come"));
+    browse.appendChild(ul);
     browse.appendChild(el("p", "section-label", "View by everyday use"));
     ul = el("ul", "families");
     ul.appendChild(option("topics", "Everyday uses", "home, travel, work"));
