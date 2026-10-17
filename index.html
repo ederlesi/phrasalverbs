@@ -177,6 +177,11 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .how.tip, .view-count.tip { margin-top: 14px; color: var(--bad); font-weight: 700; }
 .quiz-tag { color: var(--bad); }
 #intro .about-card p { margin-bottom: 6px; }
+.about-card.licence { margin-top: 12px; }
+.about .feedback { margin: 4px 2px 0; color: var(--muted); }
+.kofi { margin: 18px 2px 0; }
+.kofi a { color: var(--accent); font-weight: 700; text-underline-offset: 3px; }
+.kofi a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 #intro ol li { margin-bottom: 8px; }
 #intro .order-yes { display: block; font-weight: 700; color: var(--good); }
 #intro .order-no { display: block; color: var(--bad); }
@@ -273,7 +278,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   <div id="browse"></div>
   <section id="about" class="about" hidden>
     <div class="list-head"><h2 class="view-title">About this app</h2></div>
-    <p class="made">This was made by David Carr with the assistance of Claude Coworker on 7 October 2026.<br><br>Version 2, with Little word meanings, the placement of <em>it</em> shown wherever it matters (<em>put it down</em>, not <em>put down it</em>), and some re-ordering of selections, was made on 16 October 2026.</p>
+    <p class="made">This was made by David Carr with the assistance of Claude Coworker on 7 October 2026.<br><br>Version 2, with Little word meanings, the placement of <em>it</em> shown wherever it matters (<em>put it down</em>, not <em>put down it</em>), and some re-ordering of selections, was made on 16 October 2026.<br><br>Show your appreciation by sending me a tip: <a href="https://ko-fi.com/edbonobo" target="_blank" rel="noopener">ko-fi.com/edbonobo</a></p>
+    <div class="about-card licence">
+      <h4>Licence</h4>
+      <p>&copy; 2026 David Carr. This app is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.</p>
+      <p><span class="label">This means you can</span>Use it, copy it and share it with learners, colleagues and other teachers, for free. You can also change it or build on it, for example adding verbs or making your own worksheets from it.</p>
+      <p><span class="label">As long as you</span>Say that David Carr made it and link to the licence. Say if you changed anything. Do not sell it or use it mainly to make money. If you share a changed version, share it under this same licence.</p>
+    </div>
+    <p class="feedback"><em>Feedback welcome: tarkadhal [at] Gmail [dot] com</em></p>
 
     <h3>What the front-page buttons mean</h3>
     <p>The cards below are in the same order as the buttons on the home screen. Eight of the buttons show the same <span data-n="all"></span> phrasal verbs, sorted in a different way. The QUIZ is a test, and What are phrasal verbs? is a short guide.</p>
@@ -898,6 +910,9 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     li.appendChild(btn);
     ul.appendChild(li);
     browse.appendChild(ul);
+    var kofi = el("p", "kofi");
+    kofi.innerHTML = 'Show your appreciation by sending me a tip: <a href="https://ko-fi.com/edbonobo" target="_blank" rel="noopener">ko-fi.com/edbonobo</a>';
+    browse.appendChild(kofi);
   }
 
   // The sort button names the order you get when you tap it: A to Z, or back to importance.
