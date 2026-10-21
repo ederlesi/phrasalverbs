@@ -1,6 +1,6 @@
 // Learn Phrasal Verbs: keeps a copy of the app on the phone so it opens with no signal.
 // Network first, so learners always get the newest version when they are online.
-var CACHE = "learn-phrasal-verbs-v3";
+var CACHE = "learn-phrasal-verbs-v4";
 var FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
