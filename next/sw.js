@@ -2,7 +2,7 @@
 // Network first, so testers always get the newest preview when they are online.
 // Only deletes its own old copies, so the main app's offline copy is never touched.
 var PREFIX = "learn-phrasal-verbs-next-";
-var CACHE = PREFIX + "v1";
+var CACHE = PREFIX + "v2";
 var FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
