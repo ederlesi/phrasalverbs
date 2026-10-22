@@ -638,7 +638,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
           <li id="keep-inapp-iphone">Tap the <strong>three dots</strong> or the <strong>Safari compass</strong>. Then tap <strong>Open in Safari</strong>.</li>
           <li>Then tap <strong>Save this app to your phone</strong> again.</li>
         </ol>
-        <p class="keep-link">Or copy the link and paste it in your browser:<br><span class="keep-url" id="keep-url">https://ederlesi.github.io/phrasalverbs/</span></p>
+        <p class="keep-link">Or copy the link and paste it in your browser:<br><span class="keep-url" id="keep-url">https://ederlesi.github.io/phrasalverbs/next/</span></p>
         <button type="button" class="keep-copy" id="keep-copy">Copy the link</button>
       </div>
       <div id="keep-android">
@@ -777,7 +777,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
       dlBtn.hidden = false;
       dlBtn.addEventListener("click", function () {
         note.textContent = "";
-        downloads.save({ filename: "learn-phrasal-verbs.html", data: new Blob([PAGE_SRC]) }).then(function () {
+        downloads.save({ filename: "learn-phrasal-verbs-next.html", data: new Blob([PAGE_SRC]) }).then(function () {
           note.textContent = "Saved. Open the file to use the app with no internet.";
         }, function (err) {
           var code = err && err.code;
