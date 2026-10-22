@@ -1383,8 +1383,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     lwLabel.appendChild(el("span", "quiz-tag", "– The best way to learn"));
     browse.appendChild(lwLabel);
     var ul = el("ul", "families");
-    ul.appendChild(option("patterns", "Little word meanings", "up = more, finished"));
-    ul.appendChild(option("words", "Little words list", "in, out, up, down"));
+    var lwm = option("patterns", "Little word meanings", "", false, "up = more, finished");
+    // A star after the title: the best place to start.
+    var lwmStar = el("span", null, " ★");
+    lwmStar.setAttribute("aria-hidden", "true");
+    lwmStar.style.cssText = "color: var(--star); font-family: var(--font-body); font-size: 1.1rem;";
+    lwm.querySelector(".hw").appendChild(lwmStar);
+    ul.appendChild(lwm);
+    ul.appendChild(option("words", "Little words list", "", false, "in, out, up, down"));
     browse.appendChild(ul);
     browse.appendChild(el("p", "section-label", "View by importance"));
     ul = el("ul", "families");
@@ -1403,15 +1409,15 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     }
     browse.appendChild(el("p", "section-label", "View by verb"));
     ul = el("ul", "families");
-    ul.appendChild(option("verb", "Verb families", "go, get, put, come"));
+    ul.appendChild(option("verb", "Verb families", "", false, "go, get, put, come"));
     browse.appendChild(ul);
     browse.appendChild(el("p", "section-label", "View by everyday use"));
     ul = el("ul", "families");
-    ul.appendChild(option("topics", "Everyday uses", "home, travel, work"));
+    ul.appendChild(option("topics", "Everyday uses", "", false, "home, travel, work"));
     browse.appendChild(ul);
     browse.appendChild(el("p", "section-label", "View A to Z"));
     ul = el("ul", "families");
-    ul.appendChild(option("az", "Full dictionary", "all " + ALL.length));
+    ul.appendChild(option("az", "Full dictionary", "", false, "all " + ALL.length + " phrasal verbs, A to Z"));
     browse.appendChild(ul);
     ul = el("ul", "families about-link");
     // Contact me: a card that opens in place, with the same chevron as every other closable card.
