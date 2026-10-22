@@ -8,7 +8,8 @@
 <meta name="theme-color" content="#1d55b8">
 <meta name="application-name" content="Phrasal Verbs">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Zilla+Slab:wght@600;700&display=swap">
-</head><body>
+</head>
+<body>
 <style>
 /* Layout: one narrow column for a phone. A sticky search bar, then the verb families as a
    tap-to-open list; each phrasal verb opens in place to show its meaning and example. */
@@ -56,6 +57,8 @@ body {
 }
 .wrap { max-width: 34rem; margin-inline: auto; padding-inline: var(--gutter); padding-block: 20px 40px; }
 h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+.title-row { display: flex; align-items: center; gap: 12px; }
+.app-icon { width: 44px; height: 44px; border-radius: 10px; flex: 0 0 auto; box-shadow: 0 1px 3px rgba(22,35,59,.18); }
 .how { margin: 8px 0 0; color: var(--muted); }
 .how .star { color: var(--star); }
 .key { list-style: none; margin: 8px 2px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 16px; color: var(--muted); }
@@ -189,6 +192,9 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 /* .opt and .go chevrons use the default: sideways. */
 .opt .hw { flex: 0 0 auto; white-space: nowrap; }
 .view-title { font-family: var(--font-display); font-weight: 700; font-size: 1.45rem; line-height: 1.2; margin: 0; flex: 1 1 auto; min-width: 0; }
+.view-title-btn { display: inline-flex; align-items: center; gap: 10px; max-width: 100%; padding: 6px 0; font: inherit; color: inherit; text-align: left; background: none; border: 0; cursor: pointer; }
+.view-title-btn .chev { width: 10px; height: 10px; border-width: 2.2px; }
+.view-title-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 .view-title .star { color: var(--star); font-family: var(--font-body); font-size: 1.2rem; }
 .view-count { margin: 4px 2px 0; color: var(--muted); }
 .panel-note { margin: 10px 14px 2px; color: var(--muted); font-size: 0.9rem; }
@@ -211,8 +217,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .about .vh p { margin: 0 0 12px; }
 .kofi { margin: 18px 2px 0; }
 /* Copyright line at the bottom of the home screen; the licence name opens a card saying what it means. */
-.copy-line { margin: 14px 2px 0; color: var(--muted); font-size: 0.9rem; }
-.copy-link { font: inherit; color: var(--accent); font-weight: 700; background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.copy-line { margin: 8px 2px 0; color: var(--muted); font-size: 0.9rem; }
+.copy-link { display: block; width: 100%; min-height: 44px; font: inherit; color: var(--muted); text-align: left; background: none; border: 0; padding: 10px 0; cursor: pointer; }
+.copy-link .copy-lic { color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.copy-head { margin: 0 0 8px; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
 .copy-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .copy-card { margin: 8px 0 0; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .copy-card p { margin: 0 0 8px; }
@@ -246,7 +254,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .keep-btn .chev { position: absolute; right: 16px; top: 50%; margin-top: -8px; border-color: var(--surface); }
 .keep-btn[aria-expanded="true"] > .chev { margin-top: -10px; }
 .contact-box #about { padding: 4px 0 0; }
+.panel #intro { padding: 0 14px 6px; }
+.panel #intro > .list-head { display: none; }
+.howto-panel { padding: 10px 14px 6px; }
+.howto-panel ol { margin: 0 0 4px; padding-left: 1.3em; }
+.howto-panel li { margin: 0 0 8px; }
 .contact-box #about > .list-head { display: none; }
+.about-box { padding: 4px 12px 4px; }
+.about-box #about > .list-head { display: none; }
 .contact-box .families + .about { margin-top: 0; }
 .keep-steps { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px 14px 12px; }
 .keep-steps h3 { margin: 12px 0 4px; font-size: 1rem; }
@@ -351,14 +366,22 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .about ol li { margin-bottom: 4px; }
 .about a { color: var(--accent); font-weight: 700; text-underline-offset: 3px; }
 .about a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* About: contents list near the top, and a Back to contents link after each section. */
+.about .ab-toc { margin: 8px 0 4px; padding: 12px 14px 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.about .ab-toc h3 { margin: 0 0 8px; font-size: 1.15rem; }
+.about .ab-toc ol { margin: 0 0 6px; padding-left: 1.4em; }
+.about .ab-toc li { margin: 0; padding: 7px 0; line-height: 1.35; }
+.about .ab-sec { scroll-margin-top: 12px; }
+.about .ab-sec > h3:focus { outline: none; }
+.about .vh + p, .about .made + p { margin-top: 10px; }
+.about .ab-back { margin: 4px 0 8px; font-size: 0.9rem; }
+.about .ab-back a { display: inline-block; padding: 8px 0; font-weight: 400; }
 </style>
 
 <div class="wrap">
   <header id="top">
-    <h1>Learn Phrasal Verbs</h1>
+    <h1 class="title-row"><img class="app-icon" id="app-icon" alt="" width="44" height="44" hidden>Learn Phrasal Verbs</h1>
     <p class="how">Search for a verb or a meaning, or choose how to see the verbs.</p>
-    <p class="how tip">Learn the verbs with the most stars first.</p>
-    <div id="home-key"></div>
   </header>
 
   <div class="bar" role="search">
@@ -375,113 +398,178 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   <div id="browse"></div>
   <section id="about" class="about" hidden>
     <div class="list-head"><h2 class="view-title">About this app</h2></div>
-    <p class="made">This was made by David Carr with the assistance of Claude Coworker on 7 October 2026.<br><br>Version 2, with Little word meanings, the placement of <em>it</em> shown wherever it matters (<em>put it down</em>, not <em>put down it</em>), and some re-ordering of selections, was made on 16 October 2026.<br><br>Version 3, with a Home button, clearer arrows, better search, every little word in Little word meanings, a feedback form, saving to your phone and use without the internet, was made on 21 October 2026.<br><br>Version 4, with the physical meaning of many verbs shown first, seven more little words with their meanings, and each verb’s other meanings shown under its definition, was made on 21 October 2026.<br><br>Version 5, with every verb from the quiz listed with its meaning on the score screen, more meanings for <em>pull over</em>, search results that open over the screen you are on, and a copyright line on the home screen, was made on 21 October 2026.<br><br>Show your appreciation by sending me a tip: <a href="https://ko-fi.com/edbonobo" target="_blank" rel="noopener">ko-fi.com/edbonobo</a></p>
-    <div class="about-card licence">
-      <h4>Licence</h4>
-      <p>&copy; 2026 David Carr. This app is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.</p>
-      <p><span class="label">This means you can</span>Use it, copy it and share it with learners, colleagues and other teachers, for free. You can also change it or build on it, for example adding verbs or making your own worksheets from it.</p>
-      <p><span class="label">As long as you</span>Say that David Carr made it and link to the licence. Say if you changed anything. Do not sell it or use it mainly to make money. If you share a changed version, share it under this same licence.</p>
-    </div>
-    <p class="feedback"><em>Feedback welcome: info [dot] phrasal [at] Gmail [dot] com</em></p>
 
-    <h3>What the front-page buttons mean</h3>
-    <p>The cards below are in the same order as the buttons on the home screen. Eight of the buttons show the same <span data-n="all"></span> phrasal verbs, sorted in a different way. The QUIZ is a test, and What are phrasal verbs? is a short guide.</p>
+    <nav class="ab-toc" aria-label="Contents of About this app">
+      <h3 id="ab-top">Contents</h3>
+      <ol>
+        <li><a href="#ab-made" data-ab="ab-made">Who made this app</a></li>
+        <li><a href="#ab-words" data-ab="ab-words">Where the words come from</a></li>
+        <li><a href="#ab-buttons" data-ab="ab-buttons">The home screen buttons</a></li>
+        <li><a href="#ab-more" data-ab="ab-more">Other things the app can do</a></li>
+        <li><a href="#ab-topics" data-ab="ab-topics">The everyday topics</a></li>
+        <li><a href="#ab-approach" data-ab="ab-approach">Learning approach</a></li>
+        <li><a href="#ab-sources" data-ab="ab-sources">Sources and judgement</a></li>
+        <li><a href="#ab-licence" data-ab="ab-licence">Licence</a></li>
+      </ol>
+    </nav>
 
-    <div class="about-card">
-      <h4>What are phrasal verbs?</h4>
-      <p><span class="label">What it means</span>A short page for learners: what a phrasal verb is, why it is useful, how the little word helps, where <em>it</em> goes, and how to use this app.</p>
-    </div>
-    <div class="about-card">
-      <h4>Little word meanings</h4>
-      <p><span class="label">What it means</span>Sixteen little words, each split into the meanings it has in many phrasal verbs, such as UP means finished. A verb can be in two of these if it has two meanings; it then shows only the meaning that fits, and its other meanings are under Other meanings at the bottom. Meanings that fit none of these are under Other at the end. The meanings, and which verb goes under which, are judgement.</p>
-      <p><span class="label">Order on its screen</span>up, down, on, off, in, out, back, away, over, through, into, across, along, around, by, ahead. Up and down come first because their meanings are the clearest. Inside a meaning, &#9733; verbs come first. The other little words come after these sixteen, with their verbs but no meanings yet.</p>
-    </div>
-    <div class="about-card">
-      <h4>Little words list</h4>
-      <p><span class="label">What it means</span>The verbs grouped by their little word, such as all the verbs with up.</p>
-      <p><span class="label">Order on its screen</span>in, out, up, down, on, off, back, away, over. Opposites sit next to each other. This order is judgement. Inside a little word, &#9733; verbs come first.</p>
-    </div>
-    <div class="about-card">
-      <h4>Where <em>it</em> goes</h4>
-      <p><span class="label">What it means</span>With many phrasal verbs, a short word like <em>it</em>, <em>them</em>, <em>me</em> or <em>him</em> must go between the verb and the little word: <em>put it down</em>, not <em>put down it</em>. A longer word can go in either place: <em>put down your bag</em> and <em>put your bag down</em> are both correct.</p>
-      <p><span class="label">Where you see it</span>The meanings where this matters end with Word order: a &#10003; next to the right way and a &#10007; next to the wrong way. The short word matches the example sentence where it can.</p>
-      <p><span class="label">Where you do not see it</span>Meanings with no object, like <em>break down</em> or <em>get up</em>. Verbs where the object always goes at the end, like <em>look after them</em>. Verbs with three words, like <em>put up with</em>.</p>
-    </div>
-    <div class="about-card">
-      <h4><span class="star" aria-hidden="true">&#9733; </span>Learn these first <small>(<span data-n="l1"></span> verbs)</small></h4>
-      <p><span class="label">What it means</span>The phrasal verbs a B1 to B2 learner needs most in everyday life. Judgement.</p>
-      <p><span class="label">Stars</span>Every verb in this group has stars. &#9733;&#9733;&#9733; marks the first <span data-n="s3"></span> to learn, &#9733;&#9733; the next <span data-n="s2"></span> and &#9733; the next <span data-n="s1"></span>. Judgement. The number of stars does not change the order on any screen.</p>
-      <p><span class="label">Order on its screen</span>By verb family. Families with the most &#9733; verbs come first: <span data-n="imp"></span>.</p>
-    </div>
-    <div class="about-card">
-      <h4>Other useful verbs <small>(<span data-n="l2"></span>)</small></h4>
-      <p><span class="label">What it means</span>Common verbs to learn next. Judgement.</p>
-      <p><span class="label">Order on its screen</span>The same as above.</p>
-    </div>
-    <div class="about-card">
-      <h4>More verbs <small>(<span data-n="l3"></span>)</small></h4>
-      <p><span class="label">What it means</span>Verbs a learner meets less often. Judgement.</p>
-      <p><span class="label">Order on its screen</span>The same as above.</p>
-    </div>
-    <div class="about-card">
-      <h4><span class="quiz-tag">QUIZ:</span> Test what you know</h4>
-      <p><span class="label">What it means</span>A test of 10 questions. You see a phrasal verb and choose its meaning from four.</p>
-      <p><span class="label">Levels</span>Easy uses the Learn these first verbs. Medium uses the Other useful verbs. Difficult uses the More verbs.</p>
-    </div>
-    <div class="about-card">
-      <h4>Links to one screen</h4>
-      <p><span class="label">What it means</span>Add one of these to the end of the app's address to open one screen straight away, for example from a QR code on a handout: <em>#up</em>, <em>#down</em>, <em>#on</em>, <em>#off</em>, <em>#in</em>, <em>#out</em>, <em>#back</em>, <em>#away</em>, <em>#over</em> (that little word's meanings), <em>#meanings</em>, <em>#learn</em>, <em>#intro</em>, <em>#words</em> and <em>#quiz</em>.</p>
-    </div>
-    <div class="about-card">
-      <h4>Use it without the internet</h4>
-      <p><span class="label">What it means</span>After you open the app once on its website, your phone keeps a copy. The app then opens with no signal.</p>
-    </div>
-    <div class="about-card">
-      <h4>Verb families</h4>
-      <p><span class="label">What it means</span>The verbs grouped by their first verb, such as all the GET verbs together. There are <span data-n="big"></span> families with four or more verbs. The rest are under Other verbs.</p>
-      <p><span class="label">Order on its screen</span>By the number of phrasal verbs in each family in this app: <span data-n="sizes"></span>. This is a count. Inside a family, &#9733; verbs come first.</p>
-    </div>
-    <div class="about-card">
-      <h4>Everyday uses</h4>
-      <p><span class="label">What it means</span>The verbs under <span data-n="topics"></span> topics from daily life. A verb can be in more than one topic. The topics, and which verb goes in which topic, are judgement.</p>
-      <p><span class="label">Order on its screen</span>Topics run from Daily routine to Things that happen and change. Inside a topic, &#9733; verbs come first, then the other two groups.</p>
-    </div>
-    <div class="about-card">
-      <h4>Full dictionary</h4>
-      <p><span class="label">What it means</span>All <span data-n="all"></span> verbs under their first letter.</p>
-      <p><span class="label">Order on its screen</span>A to Z.</p>
+    <div class="ab-sec" id="ab-made">
+      <h3>1. Who made this app</h3>
+      <p class="made">This was made by David Carr with the assistance of Claude Coworker.<br><button id="vh-btn" class="chip vh-btn" type="button" aria-expanded="false" aria-controls="vh">Version history <span class="chev"></span></button></p>
+      <div id="vh" class="vh" hidden>
+        <p><span class="label">Version 1 &middot; 7 October 2026</span>The first version.</p>
+        <p><span class="label">Version 2 &middot; 16 October 2026</span>Little word meanings, the placement of <em>it</em> shown wherever it matters (<em>put it down</em>, not <em>put down it</em>), and some re-ordering of selections.</p>
+        <p><span class="label">Version 3 &middot; 21 October 2026</span>A Home button, clearer arrows, better search, every little word in Little word meanings, a feedback form, saving to your phone and use without the internet.</p>
+        <p><span class="label">Version 4 &middot; 21 October 2026</span>The physical meaning of many verbs shown first, seven more little words with their meanings, and each verb&rsquo;s other meanings shown under its definition.</p>
+        <p><span class="label">Version 5 &middot; 21 October 2026</span>Every verb from the quiz listed with its meaning on the score screen, more meanings for <em>pull over</em>, search results that open over the screen you are on, and a copyright line on the home screen.</p>
+        <p><span class="label">Version 6 &middot; 22 October 2026</span>A Read me first section, where What are phrasal verbs? and How to use this app both open on the home screen; a Home button whenever something is open; tap a screen&rsquo;s title to close it; About this app as its own button, with a contents list, a note on how Claude helped, and the learning approach behind the app; and a simpler top to the home screen, with the app&rsquo;s icon next to its name.</p>
+      </div>
+      <p>To send feedback or a tip, use Contact me on the home screen.</p>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
     </div>
 
-    <p>The A to Z button on a screen re-orders that screen alphabetically, and the search box looks in both the verbs and the meanings.</p>
-    <h4>The <span data-n="topics"></span> topics, in order</h4>
-    <ol id="about-topics"></ol>
+    <div class="ab-sec" id="ab-words">
+      <h3>2. Where the words come from</h3>
+      <p class="made">Claude, an AI, helped to make this app. Claude wrote the meanings and the example sentences. Claude also helped to choose which verbs are most important, and which meaning group each verb goes in. An ESOL teacher checked them. If something sounds wrong, please tell me.</p>
+      <p>The details are in <a href="#ab-sources" data-ab="ab-sources">Sources and judgement</a>.</p>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
+    </div>
 
-    <h3>Sources</h3>
-    <p>Two published sources were used, both for choosing which first verbs matter most. Nothing in the app is copied from them.</p>
-    <ul>
-      <li><a href="https://www.mark-davies.org/articles/davies_31.pdf" target="_blank" rel="noopener"><em>Gardner, D. and Davies, M. (2007). Pointing out frequent phrasal verbs: a corpus-based analysis. TESOL Quarterly 41(2), 339&#8211;359.</em></a> Used for the 20 first verbs that are most common in phrasal verbs in the British National Corpus: go, come, take, get, set and 15 more. Together they make 53.7% of the phrasal verbs counted there. <a href="https://www.mark-davies.org/articles/davies_31.pdf" target="_blank" rel="noopener">Read the article</a></li>
-      <li><a href="https://library.hungaricana.hu/en/view/EKTFK_EngStud03/?pg=119" target="_blank" rel="noopener"><em>Kov&#225;cs, &#201;. (2002). Properties of verbs which constitute phrasal verbs. Eger Journal of English Studies 3.</em></a> Used for the 11 verbs that make the most phrasal verbs in the Collins COBUILD Dictionary of Phrasal Verbs: put, go, come, get, push, pull, take, bring, turn, look and fall. These are the 11 biggest verb families in the app. <a href="https://library.hungaricana.hu/en/view/EKTFK_EngStud03/?pg=119" target="_blank" rel="noopener">Read the article</a></li>
-    </ul>
-    <h4>Corpus</h4>
-    <p>One corpus stands behind the sources. No corpus was searched directly to make this app.</p>
-    <ul>
-      <li><a href="https://www.natcorp.ox.ac.uk/" target="_blank" rel="noopener"><em>British National Corpus Consortium (2000). British National Corpus: World Edition. Oxford: Humanities Computing Unit of Oxford University.</em></a> 100 million words of British English. Gardner and Davies took their counts from it.</li>
-      <li><em>Collins COBUILD Dictionary of Phrasal Verbs (1995), as cited by Kov&#225;cs.</em> This is a dictionary, not a corpus. Kov&#225;cs took her counts from it. Collins builds its COBUILD dictionaries on its own corpus, the Bank of English. Open question: this has not been confirmed for the 1995 edition.</li>
-    </ul>
+    <div class="ab-sec" id="ab-buttons">
+      <h3>3. The home screen buttons</h3>
+      <p>The cards below are in the same order as the buttons on the home screen. Eight of the buttons show the same <span data-n="all"></span> phrasal verbs, sorted in a different way. The QUIZ is a test, and What are phrasal verbs? is a short guide.</p>
 
-    <h3>Judgement</h3>
-    <p>Everything below is judgement. None of it comes from a published list or a measured count.</p>
-    <ul>
-      <li>Which phrasal verbs are in the app, apart from the 11 verb families taken from Kov&#225;cs.</li>
-      <li>The meanings and the example sentences. Claude wrote them. They have not been checked against a published dictionary.</li>
-      <li>The three groups: Learn these first, Other useful verbs and More verbs.</li>
-      <li>The number of stars on each Learn these first verb.</li>
-      <li>The <span data-n="topics"></span> everyday topics, and which verbs are in each topic.</li>
-      <li>The order of the little words.</li>
-      <li>Which meanings show Word order, and which short word each one uses.</li>
-      <li>The little word meanings, which verb meaning goes under which little word meaning, and the order of the little words on that screen. These follow the cognitive-linguistics approach of Rudzka-Ostyn (Word Power: Phrasal Verbs and Compounds, 2003); the sorting of each verb is Claude's. <a href="https://linguistlist.org/issues/15/433/" target="_blank" rel="noopener">Read a review of the book</a></li>
-    </ul>
-    <p>Two things are not judgement: the size of each verb family, which is a count of the verbs in this app, and the A to Z order.</p>
+      <div class="about-card">
+        <h4>What are phrasal verbs?</h4>
+        <p><span class="label">What it means</span>A short page for learners: what a phrasal verb is, why it is useful, how the little word helps, where <em>it</em> goes, and how to use this app.</p>
+      </div>
+      <div class="about-card">
+        <h4>Little word meanings</h4>
+        <p><span class="label">What it means</span>Sixteen little words, each split into the meanings it has in many phrasal verbs, such as UP means finished. A verb can be in two of these if it has two meanings; it then shows only the meaning that fits, and its other meanings are under Other meanings at the bottom. Meanings that fit none of these are under Other at the end. The meanings, and which verb goes under which, are judgement.</p>
+        <p><span class="label">Order on its screen</span>up, down, on, off, in, out, back, away, over, through, into, across, along, around, by, ahead. Up and down come first because their meanings are the clearest. Inside a meaning, &#9733; verbs come first. The other little words come after these sixteen, with their verbs but no meanings yet.</p>
+      </div>
+      <div class="about-card">
+        <h4>Little words list</h4>
+        <p><span class="label">What it means</span>The verbs grouped by their little word, such as all the verbs with up.</p>
+        <p><span class="label">Order on its screen</span>in, out, up, down, on, off, back, away, over. Opposites sit next to each other. This order is judgement. Inside a little word, &#9733; verbs come first.</p>
+      </div>
+      <div class="about-card">
+        <h4>Where <em>it</em> goes</h4>
+        <p><span class="label">What it means</span>With many phrasal verbs, a short word like <em>it</em>, <em>them</em>, <em>me</em> or <em>him</em> must go between the verb and the little word: <em>put it down</em>, not <em>put down it</em>. A longer word can go in either place: <em>put down your bag</em> and <em>put your bag down</em> are both correct.</p>
+        <p><span class="label">Where you see it</span>The meanings where this matters end with Word order: a &#10003; next to the right way and a &#10007; next to the wrong way. The short word matches the example sentence where it can.</p>
+        <p><span class="label">Where you do not see it</span>Meanings with no object, like <em>break down</em> or <em>get up</em>. Verbs where the object always goes at the end, like <em>look after them</em>. Verbs with three words, like <em>put up with</em>.</p>
+      </div>
+      <div class="about-card">
+        <h4><span class="star" aria-hidden="true">&#9733; </span>Learn these first <small>(<span data-n="l1"></span> verbs)</small></h4>
+        <p><span class="label">What it means</span>The phrasal verbs a B1 to B2 learner needs most in everyday life. Judgement.</p>
+        <p><span class="label">Stars</span>Every verb in this group has stars. &#9733;&#9733;&#9733; marks the first <span data-n="s3"></span> to learn, &#9733;&#9733; the next <span data-n="s2"></span> and &#9733; the next <span data-n="s1"></span>. Judgement. The number of stars does not change the order on any screen.</p>
+        <p><span class="label">Order on its screen</span>By verb family. Families with the most &#9733; verbs come first: <span data-n="imp"></span>.</p>
+      </div>
+      <div class="about-card">
+        <h4>Other useful verbs <small>(<span data-n="l2"></span>)</small></h4>
+        <p><span class="label">What it means</span>Common verbs to learn next. Judgement.</p>
+        <p><span class="label">Order on its screen</span>The same as above.</p>
+      </div>
+      <div class="about-card">
+        <h4>More verbs <small>(<span data-n="l3"></span>)</small></h4>
+        <p><span class="label">What it means</span>Verbs a learner meets less often. Judgement.</p>
+        <p><span class="label">Order on its screen</span>The same as above.</p>
+      </div>
+      <div class="about-card">
+        <h4><span class="quiz-tag">QUIZ:</span> Test what you know</h4>
+        <p><span class="label">What it means</span>A test of 10 questions. You see a phrasal verb and choose its meaning from four.</p>
+        <p><span class="label">Levels</span>Easy uses the Learn these first verbs. Medium uses the Other useful verbs. Difficult uses the More verbs.</p>
+      </div>
+      <div class="about-card">
+        <h4>Verb families</h4>
+        <p><span class="label">What it means</span>The verbs grouped by their first verb, such as all the GET verbs together. There are <span data-n="big"></span> families with four or more verbs. The rest are under Other verbs.</p>
+        <p><span class="label">Order on its screen</span>By the number of phrasal verbs in each family in this app: <span data-n="sizes"></span>. This is a count. Inside a family, &#9733; verbs come first.</p>
+      </div>
+      <div class="about-card">
+        <h4>Everyday uses</h4>
+        <p><span class="label">What it means</span>The verbs under <span data-n="topics"></span> topics from daily life. A verb can be in more than one topic. The topics, and which verb goes in which topic, are judgement.</p>
+        <p><span class="label">Order on its screen</span>Topics run from Daily routine to Things that happen and change. Inside a topic, &#9733; verbs come first, then the other two groups.</p>
+      </div>
+      <div class="about-card">
+        <h4>Full dictionary</h4>
+        <p><span class="label">What it means</span>All <span data-n="all"></span> verbs under their first letter.</p>
+        <p><span class="label">Order on its screen</span>A to Z.</p>
+      </div>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
+    </div>
+
+    <div class="ab-sec" id="ab-more">
+      <h3>4. Other things the app can do</h3>
+      <p>The A to Z button on a screen re-orders that screen alphabetically, and the search box looks in both the verbs and the meanings.</p>
+      <div class="about-card">
+        <h4>Use it without the internet</h4>
+        <p><span class="label">What it means</span>After you open the app once on its website, your phone keeps a copy. The app then opens with no signal.</p>
+      </div>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
+    </div>
+
+    <div class="ab-sec" id="ab-topics">
+      <h3>5. The <span data-n="topics"></span> everyday topics</h3>
+      <p>In the order they appear on the Everyday uses screen.</p>
+      <ol id="about-topics"></ol>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
+    </div>
+
+    <div class="ab-sec" id="ab-approach">
+      <h3>6. Learning approach</h3>
+      <p>Learners can come to the verbs in several ways: by verb family, by little word, by everyday topic, by how important they are, or A to Z. Any of these works, and learners can use whichever suits them.</p>
+      <p>I recommend starting with Little word meanings. The little word is not random. It often keeps the same meaning across many verbs: UP can mean finished in <em>eat up</em>, <em>use up</em> and <em>fill up</em>. Many of these meanings grow out of the word&rsquo;s physical meaning, such as up as a direction. A learner who knows the pattern can make a good guess at a verb they have not met, and has somewhere to put each new verb. A list learned one verb at a time gives them neither.</p>
+      <h4>Research behind this</h4>
+      <ul>
+        <li><em>Rudzka-Ostyn, B. (2003). Word Power: Phrasal Verbs and Compounds. A Cognitive Approach. Berlin: Mouton de Gruyter.</em> The approach the app follows: each little word has a physical core meaning, and its other meanings extend from it. <a href="https://linguistlist.org/issues/15/433/" target="_blank" rel="noopener">Read a review of the book</a></li>
+        <li><em>Kövecses, Z. and Szabó, P. (1996). Idioms: a view from cognitive semantics. Applied Linguistics 17(3), 326&#8211;355.</em> Learners who were taught the meanings of up and down did better on a gap-fill of phrasal verbs with up and down.</li>
+        <li><em>Yasuda, S. (2010). Learning phrasal verbs through conceptual metaphors: a case of Japanese EFL learners. TESOL Quarterly 44(2), 250&#8211;273.</em> Learners taught the meanings behind the little words chose the right little word significantly more often than learners taught in the usual way.</li>
+        <li><em>Boers, F. (2000). Metaphor awareness and vocabulary retention. Applied Linguistics 21(4), 553&#8211;571.</em> Grouping expressions by meaning can help learners remember them. In one test with new multi-word verbs, though, the taught group did no better. Boers concluded that it depends on how clear the verb&rsquo;s meaning is, the learner&rsquo;s first language and their level.</li>
+      </ul>
+      <p>So the approach helps most where the meaning of the verb clearly comes from the little word. Verbs under Other on the Little word meanings screen fit no pattern and still need learning one by one.</p>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
+    </div>
+
+    <div class="ab-sec" id="ab-sources">
+      <h3>7. Sources and judgement</h3>
+      <h4>Sources</h4>
+      <p>Two published sources were used, both for choosing which first verbs matter most. Nothing in the app is copied from them.</p>
+      <ul>
+        <li><a href="https://www.mark-davies.org/articles/davies_31.pdf" target="_blank" rel="noopener"><em>Gardner, D. and Davies, M. (2007). Pointing out frequent phrasal verbs: a corpus-based analysis. TESOL Quarterly 41(2), 339&#8211;359.</em></a> Used for the 20 first verbs that are most common in phrasal verbs in the British National Corpus: go, come, take, get, set and 15 more. Together they make 53.7% of the phrasal verbs counted there. <a href="https://www.mark-davies.org/articles/davies_31.pdf" target="_blank" rel="noopener">Read the article</a></li>
+        <li><a href="https://library.hungaricana.hu/en/view/EKTFK_EngStud03/?pg=119" target="_blank" rel="noopener"><em>Kov&#225;cs, &#201;. (2002). Properties of verbs which constitute phrasal verbs. Eger Journal of English Studies 3.</em></a> Used for the 11 verbs that make the most phrasal verbs in the Collins COBUILD Dictionary of Phrasal Verbs: put, go, come, get, push, pull, take, bring, turn, look and fall. These are the 11 biggest verb families in the app. <a href="https://library.hungaricana.hu/en/view/EKTFK_EngStud03/?pg=119" target="_blank" rel="noopener">Read the article</a></li>
+      </ul>
+      <h4>Corpus</h4>
+      <p>One corpus stands behind the sources. No corpus was searched directly to make this app.</p>
+      <ul>
+        <li><a href="https://www.natcorp.ox.ac.uk/" target="_blank" rel="noopener"><em>British National Corpus Consortium (2000). British National Corpus: World Edition. Oxford: Humanities Computing Unit of Oxford University.</em></a> 100 million words of British English. Gardner and Davies took their counts from it.</li>
+        <li><em>Collins COBUILD Dictionary of Phrasal Verbs (1995), as cited by Kov&#225;cs.</em> This is a dictionary, not a corpus. Kov&#225;cs took her counts from it. Collins builds its COBUILD dictionaries on its own corpus, the Bank of English. Open question: this has not been confirmed for the 1995 edition.</li>
+      </ul>
+      <h4>Judgement</h4>
+      <p>Everything below is judgement. None of it comes from a published list or a measured count.</p>
+      <ul>
+        <li>Which phrasal verbs are in the app, apart from the 11 verb families taken from Kov&#225;cs.</li>
+        <li>The meanings and the example sentences. Claude wrote them. They have not been checked against a published dictionary.</li>
+        <li>The three groups: Learn these first, Other useful verbs and More verbs.</li>
+        <li>The number of stars on each Learn these first verb.</li>
+        <li>The <span data-n="topics"></span> everyday topics, and which verbs are in each topic.</li>
+        <li>The order of the little words.</li>
+        <li>Which meanings show Word order, and which short word each one uses.</li>
+        <li>The little word meanings, which verb meaning goes under which little word meaning, and the order of the little words on that screen. These follow the cognitive-linguistics approach of Rudzka-Ostyn (Word Power: Phrasal Verbs and Compounds, 2003); the sorting of each verb is Claude's. <a href="https://linguistlist.org/issues/15/433/" target="_blank" rel="noopener">Read a review of the book</a></li>
+      </ul>
+      <p>Two things are not judgement: the size of each verb family, which is a count of the verbs in this app, and the A to Z order.</p>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
+    </div>
+
+    <div class="ab-sec" id="ab-licence">
+      <h3>8. Licence</h3>
+      <div class="about-card licence">
+        <h4>Licence</h4>
+        <p>&copy; 2026 David Carr. This app is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.</p>
+        <p><span class="label">This means you can</span>Use it, copy it and share it with learners, colleagues and other teachers, for free. You can also change it or build on it, for example adding verbs or making your own worksheets from it.</p>
+        <p><span class="label">As long as you</span>Say that David Carr made it and link to the licence. Say if you changed anything. Do not sell it or use it mainly to make money. If you share a changed version, share it under this same licence.</p>
+      </div>
+      <p class="ab-back"><a href="#ab-top" data-ab="ab-top">&uarr; Back to contents</a></p>
+    </div>
   </section>
   <section id="intro" class="about" hidden>
     <div class="list-head"><h2 class="view-title">What are phrasal verbs?</h2></div>
@@ -519,13 +607,16 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     </div>
     <p>In this app, Word order shows you where <em>it</em> goes.</p>
 
-    <h3>How to use this app</h3>
+    <h3 id="howto-h">How to use this app</h3>
     <ol>
-      <li>Start with <strong>&#9733; Learn these first</strong>. Learn the verbs with the most stars first.</li>
+      <li>The best way to learn is to look at the <strong>little words</strong>.</li>
+      <li>At first, focus on the verbs with the most stars in <strong>&#9733; Learn these first</strong>.</li>
       <li>Tap a verb to see its meaning and an example.</li>
       <li>Search for a verb, or for a meaning like <em>delay</em>.</li>
-      <li>Try the <strong>QUIZ</strong> to practise.</li>
+      <li>Try <strong>Test what you know</strong> to practise.</li>
+      <li><strong>Save this app</strong> on your phone using the button on the home screen.</li>
     </ol>
+    <button id="intro-close" class="quiz-quiet" type="button">Close</button>
   </section>
 
   <p class="foot" id="foot"></p>
@@ -601,6 +692,9 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     var iconLink = document.querySelector('link[rel="icon"][sizes="192x192"]') || document.querySelector('link[rel="apple-touch-icon"]');
     var iconImg = document.getElementById("keep-icon");
     if (iconLink) { iconImg.src = iconLink.href; iconImg.hidden = false; }
+    // The same icon next to the app's name at the top of the home screen.
+    var appIcon = document.getElementById("app-icon");
+    if (iconLink && appIcon) { appIcon.src = iconLink.href; appIcon.hidden = false; }
     var ua = navigator.userAgent || "";
     var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     var isAndroid = /Android/.test(ua);
@@ -712,7 +806,54 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
   var browse = document.getElementById("browse");
   var results = document.getElementById("results");
   var about = document.getElementById("about");
+  // About contents: links scroll within the page and leave the address alone.
+  about.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("a[data-ab]") : null;
+    if (!a) return;
+    e.preventDefault();
+    var t = document.getElementById(a.getAttribute("data-ab"));
+    if (!t) return;
+    var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Land just under the Home and Search bar, which stays at the top of the screen.
+    var bar = document.querySelector(".bar");
+    var off = bar && !bar.hidden ? bar.getBoundingClientRect().bottom + 4 : 8;
+    window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - off, behavior: calm ? "auto" : "smooth" });
+    var h = t.tagName === "H3" ? t : t.querySelector("h3");
+    if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+  });
   var intro = document.getElementById("intro");
+  // How to use this app: its own card under Read me first, opening in place like the guide.
+  // The same steps also stay at the bottom of What are phrasal verbs?, above its Close button.
+  var howto = (function () {
+    var h = document.getElementById("howto-h"), ol = h.nextElementSibling;
+    var panel = el("div", "howto-panel");
+    panel.appendChild(ol.cloneNode(true));
+    var shut = el("button", "quiz-quiet", "Close");
+    shut.type = "button";
+    shut.addEventListener("click", function () {
+      state.open = null;
+      renderBrowse();
+      var b = document.querySelector('[aria-controls="p-howto"]');
+      if (b) {
+        var bar = document.querySelector(".bar");
+        window.scrollTo(0, b.getBoundingClientRect().top + window.pageYOffset - (bar ? bar.getBoundingClientRect().height : 0) - 8);
+        b.focus({ preventScroll: true });
+      }
+    });
+    panel.appendChild(shut);
+    return { panel: panel };
+  })();
+  // A Close button at the bottom of What are phrasal verbs? goes back to the home screen.
+  document.getElementById("intro-close").addEventListener("click", function () {
+    state.open = null;
+    renderBrowse();
+    var b = document.querySelector('[aria-controls="p-intro"]');
+    if (b) {
+      var bar = document.querySelector(".bar");
+      window.scrollTo(0, b.getBoundingClientRect().top + window.pageYOffset - (bar ? bar.getBoundingClientRect().height : 0) - 8);
+      b.focus({ preventScroll: true });
+    }
+  });
   var uid = 0;
 
   // Rank the base verbs: the ones with most phrasal verbs first. No alphabet.
@@ -1185,12 +1326,16 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     if (isOpen) panel.appendChild(buildPanel());
     btn.addEventListener("click", function () {
       state.open = (state.open === key) ? null : key;
-      if (state.open !== "contact") state.aboutOpen = false;
       renderBrowse();
       if (state.open) {
         var b = document.querySelector('[aria-controls="' + pid + '"]');
         var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (b && b.scrollIntoView) b.scrollIntoView({ block: "start", behavior: calm ? "auto" : "smooth" });
+        // Bring the opened card's heading to just below the sticky search bar, not under it.
+        if (b) {
+          var bar = document.querySelector(".bar");
+          var off = (bar ? bar.getBoundingClientRect().height : 0) + 8;
+          window.scrollTo({ top: b.getBoundingClientRect().top + window.pageYOffset - off, behavior: calm ? "auto" : "smooth" });
+        }
       }
     });
     li.appendChild(h2);
@@ -1202,8 +1347,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     // C25: choosing a screen closes the search card.
     if (state.q) { q.value = ""; state.q = ""; }
     if (view === "quiz") { if (QUIZ_PICK) state.quiz = null; else startQuiz(1); }
+    var openIntro = view === "intro";
+    if (openIntro) view = "home";
     state.view = view;
-    state.open = null;
+    state.open = openIntro ? "intro" : null;
     state.az = false;
     state.azq = false;
     render();
@@ -1221,15 +1368,28 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     btn.appendChild(name);
     btn.appendChild(el("span", "opt-sub", sub));
     btn.appendChild(el("span", "chev"));
+    btn.setAttribute("data-view", String(view));
     btn.addEventListener("click", function () { go(view); });
     li.appendChild(btn);
     return li;
   }
 
   function renderHome() {
+    // A section label above the guide, in the same style as the other labels.
+    var rmf = el("p", "section-label", "Read me first");
+    rmf.style.marginTop = "16px";
+    browse.appendChild(rmf);
     var first = el("ul", "families");
-    first.style.marginTop = "16px";
-    first.appendChild(option("intro", "What are phrasal verbs?", ""));
+    // What are phrasal verbs?: opens in place, like Contact me. The chevron at the top
+    // and the Close button at the bottom both close it.
+    first.appendChild(accordion("intro", "What are phrasal verbs?", "", "hw word", "opt-sub", function () {
+      intro.hidden = false;
+      return intro;
+    }));
+    // How to use this app: its own card under Read me first.
+    first.appendChild(accordion("howto", "How to use this app", "", "hw word", "opt-sub", function () {
+      return howto.panel;
+    }));
     browse.appendChild(first);
     var lwLabel = el("p", "section-label", "View by little word ");
     lwLabel.appendChild(el("span", "quiz-tag", "– The best way to learn"));
@@ -1359,31 +1519,6 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
         }, 2000);
       });
       box.appendChild(fb);
-      var aul = el("ul", "families");
-      var ali = el("li", "fam");
-      var abtn = el("button", "fam-btn");
-      abtn.type = "button";
-      abtn.setAttribute("aria-expanded", state.aboutOpen ? "true" : "false");
-      abtn.setAttribute("aria-controls", "about");
-      abtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><path d="M12 7.2v.1"/></svg>';
-      abtn.appendChild(el("span", "info-title", "About this app"));
-      abtn.appendChild(el("span", "chev"));
-      abtn.addEventListener("click", function () { state.aboutOpen = !state.aboutOpen; renderBrowse(); });
-      ali.appendChild(abtn);
-      if (state.aboutOpen) { about.hidden = false; ali.appendChild(about); }
-      // Version history: a small button inside About that opens the list in place.
-      var vhBtn = document.getElementById("vh-btn");
-      if (vhBtn && !vhBtn.dataset.wired) {
-        vhBtn.dataset.wired = "1";
-        vhBtn.addEventListener("click", function () {
-          var vh = document.getElementById("vh");
-          var open = vh.hidden;
-          vh.hidden = !open;
-          vhBtn.setAttribute("aria-expanded", open ? "true" : "false");
-        });
-      }
-      aul.appendChild(ali);
-      box.appendChild(aul);
       return box;
     });
     var cbtn = contactLi.querySelector(".fam-btn");
@@ -1391,24 +1526,50 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     mail.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>';
     cbtn.insertBefore(mail.firstChild, cbtn.firstChild);
     ul.appendChild(contactLi);
+    // About this app: its own card, separate from Contact me.
+    var aboutLi = accordion("about", "About this app", "", "info-title", "sr", function () {
+      var box = el("div", "about-box");
+      about.hidden = false;
+      box.appendChild(about);
+      // Version history: a small button inside About that opens the list in place.
+      var vhBtn = about.querySelector("#vh-btn");
+      if (vhBtn && !vhBtn.dataset.wired) {
+        vhBtn.dataset.wired = "1";
+        vhBtn.addEventListener("click", function () {
+          var vh = about.querySelector("#vh");
+          var open = vh.hidden;
+          vh.hidden = !open;
+          vhBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+      }
+      return box;
+    });
+    var ibtn = aboutLi.querySelector(".fam-btn");
+    var info = document.createElement("span");
+    info.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><path d="M12 7.2v.1"/></svg>';
+    ibtn.insertBefore(info.firstChild, ibtn.firstChild);
+    ul.appendChild(aboutLi);
     browse.appendChild(ul);
     var kofi = el("p", "kofi");
     kofi.innerHTML = 'Show your appreciation by sending me a tip: <a href="https://ko-fi.com/edbonobo" target="_blank" rel="noopener">ko-fi.com/edbonobo</a>';
     browse.appendChild(kofi);
     // Copyright: one line, and the licence name opens a card with what it means,
     // the same words as the Licence card in About.
+    // The whole line is one button: tapping anywhere on it opens the card.
     var cp = el("p", "copy-line");
-    cp.appendChild(document.createTextNode("\u00a9 2026 David Carr. Licence: "));
-    var cbtn2 = el("button", "copy-link", "CC BY-NC-SA 4.0");
+    var cbtn2 = el("button", "copy-link");
     cbtn2.type = "button";
     cbtn2.setAttribute("aria-expanded", "false");
     cbtn2.setAttribute("aria-controls", "copy-card");
+    cbtn2.appendChild(document.createTextNode("\u00a9 2026 David Carr. Licence: CC BY-NC-SA 4.0. "));
+    cbtn2.appendChild(el("span", "copy-lic", "What this means"));
     cp.appendChild(cbtn2);
     browse.appendChild(cp);
     var card = el("div", "copy-card");
     card.id = "copy-card";
     card.hidden = true;
-    var src = document.querySelectorAll(".about-card.licence p");
+    card.appendChild(el("h3", "copy-head", "What this means"));
+    var src = about.querySelectorAll(".about-card.licence p");
     for (var ci = 1; ci < src.length; ci++) card.appendChild(src[ci].cloneNode(true));
     var full = el("p");
     var fa = el("a", null, "Read the full licence");
@@ -1440,9 +1601,26 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 
   function viewHead(title, withStar, sub, withAz) {
     var head = el("div", "list-head");
+    // The title closes the screen, like the heading of an open card: tap it to go back
+    // to the home screen, landing on the button that opened it.
     var h = el("h2", "view-title");
-    if (withStar) h.appendChild(star());
-    h.appendChild(document.createTextNode(title));
+    var tb = el("button", "view-title-btn");
+    tb.type = "button";
+    tb.setAttribute("aria-expanded", "true");
+    if (withStar) tb.appendChild(star());
+    tb.appendChild(document.createTextNode(title));
+    tb.appendChild(el("span", "chev"));
+    var from = state.view;
+    tb.addEventListener("click", function () {
+      go("home");
+      var b = document.querySelector('[data-view="' + from + '"]');
+      if (b) {
+        var bar = document.querySelector(".bar");
+        window.scrollTo(0, b.getBoundingClientRect().top + window.pageYOffset - (bar ? bar.getBoundingClientRect().height : 0) - 8);
+        b.focus({ preventScroll: true });
+      }
+    });
+    h.appendChild(tb);
     head.appendChild(h);
     if (withAz) {
       var az = sortButton(state.az);
@@ -1748,7 +1926,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     if (QUIZ_PICK) browse.appendChild(quietButton("Change level", chooseLevel));
   }
 
+  // Home shows next to Search on every screen except the plain home screen. On the home
+  // screen it also shows while a card is open (or a search), and tapping it closes the card.
+  function syncHome() {
+    var plainHome = state.view === "home" && !state.open && state.q.trim() === "";
+    homeBtn.hidden = plainHome;
+  }
   function renderBrowse() {
+    syncHome();
     browse.textContent = "";
     if (state.view === "about" || state.view === "intro") return;
     if (state.view === "home") renderHome();
@@ -1811,7 +1996,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     var searching = state.q.trim() !== "";
     var home = state.view === "home";
     top.hidden = !home;
-    homeBtn.hidden = home;
+    syncHome();
     var aboutOn = state.view === "about";
     var introOn = state.view === "intro";
     browse.hidden = aboutOn || introOn;
@@ -1840,7 +2025,6 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     sizes: RANKED.slice(0, 5).map(function (f) { return f.v + " " + f.items.length; }).join(", ")
   };
   Array.prototype.forEach.call(about.querySelectorAll("[data-n]"), function (n) { n.textContent = FILL[n.getAttribute("data-n")]; });
-  document.getElementById("home-key").appendChild(starKey());
   var tl = document.getElementById("about-topics");
   TOPICS.forEach(function (tp) { tl.appendChild(el("li", null, tp.n)); });
   // MODE "app" is the whole dictionary. MODE "quiz" is the quiz on its own: no search bar, no Home button.
@@ -1865,7 +2049,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
     if (PATTERN_ORDER.indexOf(h) !== -1) { state.view = "patterns"; state.open = "pw-" + h; }
     else if (h === "meanings" || h === "patterns") state.view = "patterns";
     else if (h === "learn") state.view = 1;
-    else if (h === "intro") state.view = "intro";
+    else if (h === "intro") { state.view = "home"; state.open = "intro"; }
     else if (h === "words") state.view = "words";
   })();
   // Offline: on the app's own website, keep a copy on the phone so it opens with no signal.
