@@ -4200,7 +4200,7 @@ endobj
 endobj
 264 0 obj
 <<
-/Length 601
+/Length 608
 >>
 stream
 q
@@ -4227,7 +4227,7 @@ BT
 ET
 BT
 1 0 0 1 92 49.38 Tm
-(You can use this to report problems or ideas\056) Tj
+(You can use this to tell me about problems or ideas\056) Tj
 T*
 ET
 0.101961 0.101961 0.101961 RG
@@ -4523,5 +4523,5 @@ trailer
 /Info 1 0 R
 >>
 startxref
-219609
+219616
 %%EOF
